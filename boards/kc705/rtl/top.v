@@ -48,7 +48,7 @@ module top (
 	// DIP SW
 	input [3:0] dipsw,
 	// Diagnostic LEDs
-	output [7:0] led           
+	output [7:0] led	   
 );
 
 // Clock and Reset
@@ -109,92 +109,92 @@ wire		xphy4_signal_detect;
   
 
 wire		xphyrefclk_i;    
-wire		dclk_i;                     
+wire		dclk_i;		     
 
 wire		gt0_pma_resetout_i;
-wire		gt0_pcs_resetout_i;         
-wire		gt0_drpen_i;                
-wire		gt0_drpwe_i;                
-wire [15:0]	gt0_drpaddr_i;              
-wire [15:0]	gt0_drpdi_i;                
-wire [15:0]	gt0_drpdo_i;                
-wire		gt0_drprdy_i;               
-wire		gt0_resetdone_i;            
-wire [31:0]	gt0_txd_i;                  
-wire [7:0]	gt0_txc_i;                  
-wire [31:0]	gt0_rxd_i;                  
-wire [7:0]	gt0_rxc_i;                  
-wire [2:0]	gt0_loopback_i;             
-wire		gt0_txclk322_i;             
-wire		gt0_rxclk322_i;             
+wire		gt0_pcs_resetout_i;	 
+wire		gt0_drpen_i;		
+wire		gt0_drpwe_i;		
+wire [15:0]	gt0_drpaddr_i;	      
+wire [15:0]	gt0_drpdi_i;		
+wire [15:0]	gt0_drpdo_i;		
+wire		gt0_drprdy_i;	       
+wire		gt0_resetdone_i;	    
+wire [31:0]	gt0_txd_i;		  
+wire [7:0]	gt0_txc_i;		  
+wire [31:0]	gt0_rxd_i;		  
+wire [7:0]	gt0_rxc_i;		  
+wire [2:0]	gt0_loopback_i;	     
+wire		gt0_txclk322_i;	     
+wire		gt0_rxclk322_i;	     
 
 wire		gt1_pma_resetout_i;
-wire		gt1_pcs_resetout_i;         
-wire		gt1_drpen_i;                
-wire		gt1_drpwe_i;                
-wire [15:0]	gt1_drpaddr_i;              
-wire [15:0]	gt1_drpdi_i;                
-wire [15:0]	gt1_drpdo_i;                
-wire		gt1_drprdy_i;               
-wire		gt1_resetdone_i;            
-wire [31:0]	gt1_txd_i;                  
-wire [7:0]	gt1_txc_i;                  
-wire [31:0]	gt1_rxd_i;                  
-wire [7:0]	gt1_rxc_i;                  
-wire [2:0]	gt1_loopback_i;             
-wire		gt1_txclk322_i;             
-wire		gt1_rxclk322_i;             
+wire		gt1_pcs_resetout_i;	 
+wire		gt1_drpen_i;		
+wire		gt1_drpwe_i;		
+wire [15:0]	gt1_drpaddr_i;	      
+wire [15:0]	gt1_drpdi_i;		
+wire [15:0]	gt1_drpdo_i;		
+wire		gt1_drprdy_i;	       
+wire		gt1_resetdone_i;	    
+wire [31:0]	gt1_txd_i;		  
+wire [7:0]	gt1_txc_i;		  
+wire [31:0]	gt1_rxd_i;		  
+wire [7:0]	gt1_rxc_i;		  
+wire [2:0]	gt1_loopback_i;	     
+wire		gt1_txclk322_i;	     
+wire		gt1_rxclk322_i;	     
 
 wire		gt2_pma_resetout_i;
-wire		gt2_pcs_resetout_i;         
-wire		gt2_drpen_i;                
-wire		gt2_drpwe_i;                
-wire [15:0]	gt2_drpaddr_i;              
-wire [15:0]	gt2_drpdi_i;                
-wire [15:0]	gt2_drpdo_i;                
-wire		gt2_drprdy_i;               
-wire		gt2_resetdone_i;            
-wire [31:0]	gt2_txd_i;                  
-wire [7:0]	gt2_txc_i;                  
-wire [31:0]	gt2_rxd_i;                  
-wire [7:0]	gt2_rxc_i;                  
-wire [2:0]	gt2_loopback_i;             
-wire		gt2_txclk322_i;             
-wire		gt2_rxclk322_i;             
+wire		gt2_pcs_resetout_i;	 
+wire		gt2_drpen_i;		
+wire		gt2_drpwe_i;		
+wire [15:0]	gt2_drpaddr_i;	      
+wire [15:0]	gt2_drpdi_i;		
+wire [15:0]	gt2_drpdo_i;		
+wire		gt2_drprdy_i;	       
+wire		gt2_resetdone_i;	    
+wire [31:0]	gt2_txd_i;		  
+wire [7:0]	gt2_txc_i;		  
+wire [31:0]	gt2_rxd_i;		  
+wire [7:0]	gt2_rxc_i;		  
+wire [2:0]	gt2_loopback_i;	     
+wire		gt2_txclk322_i;	     
+wire		gt2_rxclk322_i;	     
 
 wire		gt3_pma_resetout_i;
-wire		gt3_pcs_resetout_i;         
-wire		gt3_drpen_i;                
-wire		gt3_drpwe_i;                
-wire [15:0]	gt3_drpaddr_i;              
-wire [15:0]	gt3_drpdi_i;                
-wire [15:0]	gt3_drpdo_i;                
-wire		gt3_drprdy_i;               
-wire		gt3_resetdone_i;            
-wire [31:0]	gt3_txd_i;                  
-wire [7:0]	gt3_txc_i;                  
-wire [31:0]	gt3_rxd_i;                  
-wire [7:0]	gt3_rxc_i;                  
-wire [2:0]	gt3_loopback_i;             
-wire		gt3_txclk322_i;             
-wire		gt3_rxclk322_i;             
+wire		gt3_pcs_resetout_i;	 
+wire		gt3_drpen_i;		
+wire		gt3_drpwe_i;		
+wire [15:0]	gt3_drpaddr_i;	      
+wire [15:0]	gt3_drpdi_i;		
+wire [15:0]	gt3_drpdo_i;		
+wire		gt3_drprdy_i;	       
+wire		gt3_resetdone_i;	    
+wire [31:0]	gt3_txd_i;		  
+wire [7:0]	gt3_txc_i;		  
+wire [31:0]	gt3_rxd_i;		  
+wire [7:0]	gt3_rxc_i;		  
+wire [2:0]	gt3_loopback_i;	     
+wire		gt3_txclk322_i;	     
+wire		gt3_rxclk322_i;	     
 
 wire		gt4_pma_resetout_i;
-wire		gt4_pcs_resetout_i;         
-wire		gt4_drpen_i;                
-wire		gt4_drpwe_i;                
-wire [15:0]	gt4_drpaddr_i;              
-wire [15:0]	gt4_drpdi_i;                
-wire [15:0]	gt4_drpdo_i;                
-wire		gt4_drprdy_i;               
-wire		gt4_resetdone_i;            
-wire [31:0]	gt4_txd_i;                  
-wire [7:0]	gt4_txc_i;                  
-wire [31:0]	gt4_rxd_i;                  
-wire [7:0]	gt4_rxc_i;                  
-wire [2:0]	gt4_loopback_i;             
-wire		gt4_txclk322_i;             
-wire		gt4_rxclk322_i;             
+wire		gt4_pcs_resetout_i;	 
+wire		gt4_drpen_i;		
+wire		gt4_drpwe_i;		
+wire [15:0]	gt4_drpaddr_i;	      
+wire [15:0]	gt4_drpdi_i;		
+wire [15:0]	gt4_drpdo_i;		
+wire		gt4_drprdy_i;	       
+wire		gt4_resetdone_i;	    
+wire [31:0]	gt4_txd_i;		  
+wire [7:0]	gt4_txc_i;		  
+wire [31:0]	gt4_rxd_i;		  
+wire [7:0]	gt4_rxc_i;		  
+wire [2:0]	gt4_loopback_i;	     
+wire		gt4_txclk322_i;	     
+wire		gt4_rxclk322_i;	     
   
 // ---------------
 // Clock and Reset
@@ -645,60 +645,33 @@ wire [31:0] rx3_ipv4_i;
 wire [31:0] global_counter;
 
 // ---------------
-// Measure
+// L2 switch
 // ---------------
-measure measure_inst (
+l2switch l2switch_inst (
 	.sys_rst(sys_rst),
-	.sys_clk(clk156),
-	.pci_clk(user_clk),
+	.sys_clk(xgemac_clk_156),
+	.xgemac_clk_156(xgemac_clk_156),
 
 	.xgmii_0_txd(xgmii0_txd),
 	.xgmii_0_txc(xgmii0_txc),
 	.xgmii_0_rxd(xgmii0_rxd),
 	.xgmii_0_rxc(xgmii0_rxc),
+	.xphy_0_status(xphy0_status),
 
 	.xgmii_1_txd(xgmii1_txd),
 	.xgmii_1_txc(xgmii1_txc),
 	.xgmii_1_rxd(xgmii1_rxd),
 	.xgmii_1_rxc(xgmii1_rxc),
+	.xphy_1_status(xphy1_status),
 
-`ifdef ENABLE_XGMII23
-	.xgmii_2_txd(xgmii2_txd),
-	.xgmii_2_txc(xgmii2_txc),
-	.xgmii_2_rxd(xgmii2_rxd),
-	.xgmii_2_rxc(xgmii2_rxc),
-
-	.xgmii_3_txd(xgmii3_txd),
-	.xgmii_3_txc(xgmii3_txc),
-	.xgmii_3_rxd(xgmii3_rxd),
-	.xgmii_3_rxc(xgmii3_rxc),
-`endif
-
-	.tx0_enable(tx0_enable),
-	.tx0_ipv6(tx0_ipv6),
-	.tx0_fullroute(tx0_fullroute),
-	.tx0_req_arp(tx0_req_arp),
-	.tx0_frame_len(tx0_frame_len),
-	.tx0_inter_frame_gap(tx0_inter_frame_gap),
-	.tx0_ipv4_srcip(tx0_ipv4_srcip),
-	.tx0_src_mac(tx0_src_mac),
-	.tx0_ipv4_gwip(tx0_ipv4_gwip),
-	.tx0_ipv6_srcip(tx0_ipv6_srcip),
-	.tx0_ipv6_dstip(tx0_ipv6_dstip),
-	.tx0_dst_mac(tx0_dst_mac),
-	.tx0_ipv4_dstip({tx0_ipv4_dstip}),
-	.tx0_pps(tx0_pps),
-	.tx0_throughput(tx0_throughput),
-	.tx0_ipv4_ip(tx0_ipv4_ip),
-
-	.rx1_pps(rx1_pps),
-	.rx1_throughput(rx1_throughput),
-	.rx1_latency(rx1_latency),
-	.rx1_ipv4_ip(rx1_ipv4_ip),
-
-	.global_counter(global_counter)
+	.button_n(button_n),
+	.button_s(button_s),
+	.button_w(button_w),
+	.button_e(button_e),
+	.button_c(button_c),
+	.dipsw(dipsw),
+	.led()
 );
-
 
 assign led[0] = xphy0_status[0]; 
 assign led[1] = xphy1_status[0]; 
