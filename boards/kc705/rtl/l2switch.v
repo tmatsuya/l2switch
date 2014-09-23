@@ -160,9 +160,7 @@ sfifo72_10 rx0fifo (
 
 	.dout(rx0_phyq_dout),
 	.empty(rx0_phyq_empty),
-	.rd_en(rx0_phyq_rd_en),
-
-	.data_count()
+	.rd_en(rx0_phyq_rd_en)
 );
 sfifo72_10 rx1fifo (
 	.clk(sys_clk),
@@ -174,9 +172,7 @@ sfifo72_10 rx1fifo (
 
 	.dout(rx1_phyq_dout),
 	.empty(rx1_phyq_empty),
-	.rd_en(rx1_phyq_rd_en),
-
-	.data_count()
+	.rd_en(rx1_phyq_rd_en)
 );
 `ifdef ENABLE_PHY2
 sfifo72_10 rx2fifo (
@@ -189,9 +185,7 @@ sfifo72_10 rx2fifo (
 
 	.dout(rx2_phyq_dout),
 	.empty(rx2_phyq_empty),
-	.rd_en(rx2_phyq_rd_en),
-
-	.data_count()
+	.rd_en(rx2_phyq_rd_en)
 );
 `endif
 `ifdef ENABLE_PHY3
@@ -205,9 +199,7 @@ sfifo72_10 rx3fifo (
 
 	.dout(rx3_phyq_dout),
 	.empty(rx3_phyq_empty),
-	.rd_en(rx3_phyq_rd_en),
-
-	.data_count()
+	.rd_en(rx3_phyq_rd_en)
 );
 `endif
 `endif
@@ -219,41 +211,26 @@ xgmii2fifo72 # (
 	.Gap(4'h2)
 ) rx0xgmii2fifo (
 	.sys_rst(sys_rst),
-
 	.xgmii_rx_clk(xgemac_clk_156),
 	.xgmii_rxd({xgmii_0_rxc,xgmii_0_rxd}),
-
-	.din(rx0_phyq_din),
-	.full(rx0_phyq_full),
-	.wr_en(rx0_phyq_wr_en),
-	.wr_clk()
+	.din(rx0_phyq_din)
 );
 xgmii2fifo72 # (
 	.Gap(4'h2)
 ) rx1xgmii2fifo (
 	.sys_rst(sys_rst),
-
 	.xgmii_rx_clk(xgemac_clk_156),
 	.xgmii_rxd({xgmii_1_rxc,xgmii_1_rxd}),
-
-	.din(rx1_phyq_din),
-	.full(rx1_phyq_full),
-	.wr_en(rx1_phyq_wr_en),
-	.wr_clk()
+	.din(rx1_phyq_din)
 );
 `ifdef ENABLE_PHY2
 xgmii2fifo72 # (
 	.Gap(4'h2)
 ) rx2xgmii2fifo (
 	.sys_rst(sys_rst),
-
 	.xgmii_rx_clk(xgemac_clk_156),
 	.xgmii_rxd({xgmii_2_rxc,xgmii_2_rxd}),
-
-	.din(rx2_phyq_din),
-	.full(rx2_phyq_full),
-	.wr_en(rx2_phyq_wr_en),
-	.wr_clk()
+	.din(rx2_phyq_din)
 );
 `endif
 `ifdef ENABLE_PHY3
@@ -261,14 +238,9 @@ xgmii2fifo72 # (
 	.Gap(4'h2)
 ) rx3xgmii2fifo (
 	.sys_rst(sys_rst),
-
 	.xgmii_rx_clk(xgemac_clk_156),
 	.xgmii_rxd({xgmii_3_rxc,xgmii_3_rxd}),
-
-	.din(rx3_phyq_din),
-	.full(rx3_phyq_full),
-	.wr_en(rx3_phyq_wr_en),
-	.wr_clk()
+	.din(rx3_phyq_din)
 );
 `endif
 

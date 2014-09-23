@@ -2,13 +2,10 @@
 `timescale 1ns / 1ps
 
 module top (
-`ifdef ENABLE_XGMII01
 	input xphy0_refclk_p, 
 	input xphy0_refclk_n, 
-`endif
 	output [4:0] sfp_tx_disable, 
 	output [3:0] sfp_tx_fault, 
-`ifdef ENABLE_XGMII01
 	output xphy0_txp, 
 	output xphy0_txn, 
 	input xphy0_rxp, 
@@ -17,18 +14,19 @@ module top (
 	output xphy1_txn, 
 	input xphy1_rxp, 
 	input xphy1_rxn,
-`endif
-`ifdef ENABLE_XGMII23
+`ifdef ENABLE_PHY2
 	output xphy2_txp, 
 	output xphy2_txn, 
 	input xphy2_rxp, 
 	input xphy2_rxn,
+`endif
+`ifdef ENABLE_PHY3
 	output xphy3_txp, 
 	output xphy3_txn, 
 	input xphy3_rxp, 
 	input xphy3_rxn,
 `endif
-`ifdef ENABLE_XGMII4
+`ifdef ENABLE_PHY4
 	input xphy4_refclk_p, 
 	input xphy4_refclk_n, 
 	output xphy4_txp, 
@@ -275,7 +273,6 @@ wire [63:0]	gt4_rxd;
 wire [7:0]	gt4_rxc;
 wire [2:0]	gt4_loopback;
 
-`ifdef ENABLE_XGMII01
 // ---------------
 // GT0 instance
 // ---------------
@@ -386,9 +383,8 @@ network_path network_path_inst_1 (
 	.xgmii_rxd(xgmii1_rxd),
 	.xgmii_rxc(xgmii1_rxc)
 ); 
-`endif
 
-`ifdef ENABLE_XGMII23
+`ifdef ENABLE_PHY2
 // ---------------
 // GT2 instance
 // ---------------
@@ -438,7 +434,9 @@ network_path network_path_inst_2 (
 	.xgmii_rxd(xgmii2_rxd),
 	.xgmii_rxc(xgmii2_rxc)
 ); 
+`endif
 
+`ifdef ENABLE_PHY3
 // ---------------
 // GT3 instance
 // ---------------
@@ -488,9 +486,9 @@ network_path network_path_inst_3 (
 	.xgmii_rxd(xgmii3_rxd),
 	.xgmii_rxc(xgmii3_rxc)
 ); 
-`endif    //ENABLE_XGMII23
+`endif
 
-`ifdef ENABLE_XGMII4
+`ifdef ENABLE_PHY4
 // ---------------
 // GT4 instance
 // ---------------
@@ -545,13 +543,8 @@ network_path network_path_inst_4 (
 `ifdef USE_DIFF_QUAD
 xgbaser_gt_diff_quad_wrapper xgbaser_gt_wrapper_inst_0 (
 	.areset(sys_rst),
-`ifdef ENABLE_XGMII4
-	.refclk_p(xphy4_refclk_p),
-	.refclk_n(xphy4_refclk_n),
-`else
 	.refclk_p(xphy0_refclk_p),
 	.refclk_n(xphy0_refclk_n),
-`endif
 	.txclk322(txclk322),
 	.gt0_tx_resetdone(xphy0_tx_resetdone),
 	.gt1_tx_resetdone(xphy1_tx_resetdone),
@@ -578,13 +571,8 @@ xgbaser_gt_diff_quad_wrapper xgbaser_gt_wrapper_inst_0 (
 `else
 xgbaser_gt_same_quad_wrapper xgbaser_gt_wrapper_inst_0 (
 	.areset(sys_rst),
-`ifdef ENABLE_XGMII4
-	.refclk_p(xphy4_refclk_p),
-	.refclk_n(xphy4_refclk_n),
-`else
 	.refclk_p(xphy0_refclk_p),
 	.refclk_n(xphy0_refclk_n),
-`endif
 	.txclk322(txclk322),
 	.gt0_tx_resetdone(xphy0_tx_resetdone),
 	.gt1_tx_resetdone(xphy1_tx_resetdone),
@@ -609,40 +597,6 @@ xgbaser_gt_same_quad_wrapper xgbaser_gt_wrapper_inst_0 (
 `endif    //USE_DIFF_QUAD
 
 
-
-// ---------------
-// PCIe user 
-// ---------------
-wire tx0_enable;
-wire tx0_ipv6;
-wire tx0_fullroute;
-wire tx0_req_arp;
-wire [15:0] tx0_frame_len;
-wire [31:0] tx0_inter_frame_gap;
-wire [31:0] tx0_ipv4_srcip;
-wire [47:0] tx0_src_mac;
-wire [31:0] tx0_ipv4_gwip;
-wire [47:0] tx0_dst_mac;
-wire [31:0] tx0_ipv4_dstip;
-wire [127:0] tx0_ipv6_srcip;
-wire [127:0] tx0_ipv6_dstip;
-wire [31:0] tx0_pps;
-wire [31:0] tx0_throughput;
-wire [31:0] tx0_ipv4_ip;
-wire [31:0] rx1_pps;
-wire [31:0] rx1_throughput;
-wire [23:0] rx1_latency;
-wire [31:0] rx1_ipv4_ip;
-wire [31:0] rx2_pps;
-wire [31:0] rx2_throughput;
-wire [23:0] rx2_latency;
-wire [31:0] rx2_ipv4_ip;
-wire [31:0] rx3_pps;
-wire [31:0] rx3_throughput;
-wire [23:0] rx3_latency;
-wire [31:0] rx3_ipv4_i;
-
-wire [31:0] global_counter;
 
 // ---------------
 // L2 switch

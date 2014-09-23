@@ -18,7 +18,8 @@ add_files -fileset constrs_1 -norecurse ./${impl_const}
 set_property used_in_synthesis true [get_files ./${impl_const}]
 
 # Project Design Files from IP Catalog (comment out IPs using legacy Coregen cores)
-import_ip -files {../ip_catalog/ten_gig_eth_pcs_pma_ip.xci} -name ten_gig_eth_pcs_pma_ip 
+import_ip -files {../ip_catalog/ten_gig_eth_pcs_pma_ip.xci} -name ten_gig_eth_pcs_pma_ip
+import_ip -files {../ip_catalog/sfifo72_10.xci} -name sfifo72_10
 
 # Other Custom logic sources/rtl files
 read_verilog "../rtl/network_path/xgbaser_gt_diff_quad_wrapper.v"
@@ -26,11 +27,9 @@ read_verilog "../rtl/network_path/xgbaser_gt_same_quad_wrapper.v"
 read_verilog "../rtl/network_path/network_path.v"
 read_verilog "../rtl/network_path/ten_gig_eth_pcs_pma_ip_GT_Common_wrapper.v"
 read_verilog "../rtl/top.v"
-read_verilog "../rtl/measure.v"
-read_verilog "../rtl/measure_core.v"
+read_verilog "../rtl/l2switch.v"
 read_verilog "../rtl/xgmii2fifo72.v"
-read_verilog "../../../cores/crc32/rtl/CRC32_D64.v"
-read_verilog "../../../cores/crc32/rtl/CRC32_D32.v"
+read_verilog "../rtl/fifo72toxgmii.v"
 
 
 # NGC files
