@@ -608,6 +608,22 @@ l2switch l2switch_inst (
 	.xgmii_1_rxc(xgmii1_rxc),
 	.xphy_1_status(xphy1_status),
 
+`ifdef ENABLE_PHY2
+	.xgmii_2_txd(xgmii2_txd),
+	.xgmii_2_txc(xgmii2_txc),
+	.xgmii_2_rxd(xgmii2_rxd),
+	.xgmii_2_rxc(xgmii2_rxc),
+	.xphy_2_status(xphy2_status),
+`endif
+
+`ifdef ENABLE_PHY3
+	.xgmii_3_txd(xgmii3_txd),
+	.xgmii_3_txc(xgmii3_txc),
+	.xgmii_3_rxd(xgmii3_rxd),
+	.xgmii_3_rxc(xgmii3_rxc),
+	.xphy_3_status(xphy3_status),
+`endif
+
 	.button_n(button_n),
 	.button_s(button_s),
 	.button_w(button_w),
