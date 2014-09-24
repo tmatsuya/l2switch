@@ -1,52 +1,53 @@
 `include "../rtl/setup.v"
 `timescale 1ns / 1ps
+`default_nettype none
 
 module top (
-	input xphy0_refclk_p, 
-	input xphy0_refclk_n, 
-	output [4:0] sfp_tx_disable, 
-	output [3:0] sfp_tx_fault, 
-	output xphy0_txp, 
-	output xphy0_txn, 
-	input xphy0_rxp, 
-	input xphy0_rxn,
-	output xphy1_txp, 
-	output xphy1_txn, 
-	input xphy1_rxp, 
-	input xphy1_rxn,
+	input wire xphy0_refclk_p, 
+	input wire xphy0_refclk_n, 
+	output wire [4:0] sfp_tx_disable, 
+	output wire [3:0] sfp_tx_fault, 
+	output wire xphy0_txp, 
+	output wire xphy0_txn, 
+	input wire xphy0_rxp, 
+	input wire xphy0_rxn,
+	output wire xphy1_txp, 
+	output wire xphy1_txn, 
+	input wire xphy1_rxp, 
+	input wire xphy1_rxn,
 `ifdef ENABLE_PHY2
-	output xphy2_txp, 
-	output xphy2_txn, 
-	input xphy2_rxp, 
-	input xphy2_rxn,
+	output wire xphy2_txp, 
+	output wire xphy2_txn, 
+	input wire xphy2_rxp, 
+	input wire xphy2_rxn,
 `endif
 `ifdef ENABLE_PHY3
-	output xphy3_txp, 
-	output xphy3_txn, 
-	input xphy3_rxp, 
-	input xphy3_rxn,
+	output wire xphy3_txp, 
+	output wire xphy3_txn, 
+	input wire xphy3_rxp, 
+	input wire xphy3_rxn,
 `endif
 `ifdef ENABLE_PHY4
-	input xphy4_refclk_p, 
-	input xphy4_refclk_n, 
-	output xphy4_txp, 
-	output xphy4_txn, 
-	input xphy4_rxp, 
-	input xphy4_rxn,
+	input wire xphy4_refclk_p, 
+	input wire xphy4_refclk_n, 
+	output wire xphy4_txp, 
+	output wire xphy4_txn, 
+	input wire xphy4_rxp, 
+	input wire xphy4_rxn,
 `endif
-	output fmc_ok_led,
-	input [1:0] fmc_gbtclk0_fsel,
-	output fmc_clk_312_5,
+	output wire fmc_ok_led,
+	input wire [1:0] fmc_gbtclk0_fsel,
+	output wire fmc_clk_312_5,
 	// BUTTON
-	input button_n,
-	input button_s,
-	input button_w,
-	input button_e,
-	input button_c,
+	input wire button_n,
+	input wire button_s,
+	input wire button_w,
+	input wire button_e,
+	input wire button_c,
 	// DIP SW
-	input [3:0] dipsw,
+	input wire [3:0] dipsw,
 	// Diagnostic LEDs
-	output [7:0] led	   
+	output wire [7:0] led	   
 );
 
 // Clock and Reset
@@ -313,7 +314,7 @@ network_path network_path_inst_0 (
 	.prtad(xphy0_prtad),
 	.xphy_status(xphy0_status),
 	.clk156(clk156),
-	.soft_reset(~axi_str_c2s0_aresetn),
+	.soft_reset(),
 	.sys_rst((sys_rst & ~mmcm_locked_clk156)),
 	.nw_rst_out(nw0_reset_i),   
 	.dclk(dclk_i),
@@ -364,7 +365,7 @@ network_path network_path_inst_1 (
 	.prtad(xphy1_prtad),
 	.xphy_status(xphy1_status),
 	.clk156(clk156),
-	.soft_reset(~axi_str_c2s1_aresetn),
+	.soft_reset(),
 	.sys_rst((sys_rst & ~mmcm_locked_clk156)),
 	.nw_rst_out(nw1_reset_i),   
 	.dclk(dclk_i), 
@@ -415,7 +416,7 @@ network_path network_path_inst_2 (
 	.prtad(xphy2_prtad),
 	.xphy_status(xphy2_status),
 	.clk156(clk156),
-	.soft_reset(~axi_str_c2s1_aresetn),
+	.soft_reset(),
 	.sys_rst((sys_rst & ~mmcm_locked_clk156)),
 	.nw_rst_out(nw2_reset_i),   
 	.dclk(dclk_i), 
@@ -467,7 +468,7 @@ network_path network_path_inst_3 (
 	.prtad(xphy3_prtad),
 	.xphy_status(xphy3_status),
 	.clk156(clk156),
-	.soft_reset(~axi_str_c2s1_aresetn),
+	.soft_reset(),
 	.sys_rst((sys_rst & ~mmcm_locked_clk156)),
 	.nw_rst_out(nw3_reset_i),   
 	.dclk(dclk_i), 
@@ -519,7 +520,7 @@ network_path network_path_inst_4 (
 	.prtad(xphy4_prtad),
 	.xphy_status(xphy4_status),
 	.clk156(clk156),
-	.soft_reset(~axi_str_c2s1_aresetn),
+	.soft_reset(),
 	.sys_rst((sys_rst & ~mmcm_locked_clk156)),
 	.nw_rst_out(nw4_reset_i),   
 	.dclk(dclk_i), 
@@ -551,7 +552,7 @@ xgbaser_gt_diff_quad_wrapper xgbaser_gt_wrapper_inst_0 (
 	.txusrclk2(txusrclk2),
 	.clk156(clk156),
 	.dclk(dclk_i),
-	.qpllreset(qpllreset),
+	.qpllreset(),
 	.qplllock(qplllock),
 	.qplloutclk1(qplloutclk1), 
 	.qplloutrefclk1(qplloutrefclk1), 
@@ -579,7 +580,7 @@ xgbaser_gt_same_quad_wrapper xgbaser_gt_wrapper_inst_0 (
 	.txusrclk2(txusrclk2),
 	.clk156(clk156),
 	.dclk(dclk_i),
-	.qpllreset(qpllreset),
+	.qpllreset(),
 	.qplllock(qplllock),
 	.qplloutclk(qplloutclk), 
 	.qplloutrefclk(qplloutrefclk) 
@@ -650,3 +651,4 @@ assign fmc_ok_led = 1'b1;
 assign fmc_clk_312_5 = (fmc_gbtclk0_fsel == 2'b11) ? 1'b1 : 1'b0;
 
 endmodule
+`default_nettype wire

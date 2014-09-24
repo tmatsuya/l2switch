@@ -1,50 +1,50 @@
 //`timescale 1ns / 1ps
 `include "../rtl/setup.v"
+`default_nettype none
 
 module l2switch (
-	input	 sys_rst,
-	input	 sys_clk,
+	input wire sys_rst,
+	input wire sys_clk,
 
 	// XGMII interfaces for 4 MACs
-	output [63:0] xgmii_0_txd,
-	output  [7:0] xgmii_0_txc,
-	input  [63:0] xgmii_0_rxd,
-	input   [7:0] xgmii_0_rxc,
-	input   [7:0] xphy_0_status,
+	output wire [63:0] xgmii_0_txd,
+	output wire  [7:0] xgmii_0_txc,
+	input  wire [63:0] xgmii_0_rxd,
+	input  wire  [7:0] xgmii_0_rxc,
+	input  wire  [7:0] xphy_0_status,
 
-	output [63:0] xgmii_1_txd,
-	output  [7:0] xgmii_1_txc,
-	input  [63:0] xgmii_1_rxd,
-	input   [7:0] xgmii_1_rxc,
-	input   [7:0] xphy_1_status,
+	output wire [63:0] xgmii_1_txd,
+	output wire  [7:0] xgmii_1_txc,
+	input  wire [63:0] xgmii_1_rxd,
+	input  wire  [7:0] xgmii_1_rxc,
+	input  wire  [7:0] xphy_1_status,
 
 `ifdef ENABLE_PHY2
-	output [63:0] xgmii_2_txd,
-	output  [7:0] xgmii_2_txc,
-	input  [63:0] xgmii_2_rxd,
-	input   [7:0] xgmii_2_rxc,
-	input   [7:0] xphy_2_status,
+	output wire [63:0] xgmii_2_txd,
+	output wire  [7:0] xgmii_2_txc,
+	input  wire [63:0] xgmii_2_rxd,
+	input  wire  [7:0] xgmii_2_rxc,
+	input  wire  [7:0] xphy_2_status,
 `endif
 
 `ifdef ENABLE_PHY3
-	output [63:0] xgmii_3_txd,
-	output  [7:0] xgmii_3_txc,
-	input  [63:0] xgmii_3_rxd,
-	input   [7:0] xgmii_3_rxc,
-	input   [7:0] xphy_3_status,
+	output wire [63:0] xgmii_3_txd,
+	output wire  [7:0] xgmii_3_txc,
+	input  wire [63:0] xgmii_3_rxd,
+	input  wire  [7:0] xgmii_3_rxc,
+	input  wire  [7:0] xphy_3_status,
 `endif
 
 	// ---- BUTTON
-	input	 button_n,
-	input	 button_s,
-	input	 button_w,
-	input	 button_e,
-	input	 button_c,
+	input  wire  button_n,
+	input  wire  button_s,
+	input  wire  button_w,
+	input  wire  button_e,
+	input  wire  button_c,
 	// ---- DIP SW
-	input   [3:0] dipsw,		
+	input  wire [3:0] dipsw,		
 	// ---- LED
-	output  [7:0] led		   
-
+	output wire [7:0] led		   
 );
 
 //-----------------------------------
@@ -222,3 +222,4 @@ assign led[3] = xphy_1_status[3];
 `endif
 
 endmodule
+`default_nettype wire

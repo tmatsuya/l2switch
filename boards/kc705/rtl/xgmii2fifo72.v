@@ -1,8 +1,10 @@
+`default_nettype none
+
 module xgmii2fifo72 (
-	input         sys_rst,
-	input         xgmii_rx_clk,
-	input  [71:0] xgmii_rxd,
-	output [71:0] din
+	input  wire        sys_rst,
+	input  wire        xgmii_rx_clk,
+	input  wire [71:0] xgmii_rxd,
+	output wire [71:0] din
 );
 
 
@@ -53,3 +55,4 @@ end
 assign din[71:0] = rxd[71:0];
 
 endmodule
+`default_nettype wire

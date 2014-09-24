@@ -1,3 +1,4 @@
+`default_nettype none
 
 module fifo72toxgmii (
 	// FIFO
@@ -35,3 +36,4 @@ assign rd_en = ~empty;
 assign xgmii_txd   = txd;
 
 endmodule
+`default_nettype wire
