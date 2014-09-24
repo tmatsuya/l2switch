@@ -47,6 +47,8 @@ module l2switch (
 	output wire [7:0] led		   
 );
 
+wire  [71:0] xgmii_0_rx, xgmii_1_rx, xgmii_2_rx, xgmii_2_rx, xgmii_3_rx, xgmii_4_rx;
+
 //-----------------------------------
 // RX0,RX1,RX2,RX3_PHYQ FIFO
 //-----------------------------------
@@ -129,20 +131,20 @@ xgmii2fifo72 rx0xgmii2fifo (
 	.sys_rst(sys_rst),
 	.xgmii_rx_clk(sys_clk),
 	.xgmii_rxd({xgmii_0_rxc,xgmii_0_rxd}),
-	.din({xgmii_1_txc, xgmii_1_txd})
+	.din(xgmii_0_rx)
 );
 xgmii2fifo72 rx1xgmii2fifo (
 	.sys_rst(sys_rst),
 	.xgmii_rx_clk(sys_clk),
 	.xgmii_rxd({xgmii_1_rxc,xgmii_1_rxd}),
-	.din({xgmii_0_txc, xgmii_0_txd})
+	.din(xgmii_1_rx)
 );
 `ifdef ENABLE_PHY2
 xgmii2fifo72 rx2xgmii2fifo (
 	.sys_rst(sys_rst),
 	.xgmii_rx_clk(sys_clk),
 	.xgmii_rxd({xgmii_2_rxc,xgmii_2_rxd}),
-	.din({xgmii_3_txc, xgmii_3_txd})
+	.din(xgmii_2_rx)
 );
 `endif
 `ifdef ENABLE_PHY3
@@ -150,7 +152,15 @@ xgmii2fifo72 rx3xgmii2fifo (
 	.sys_rst(sys_rst),
 	.xgmii_rx_clk(sys_clk),
 	.xgmii_rxd({xgmii_3_rxc,xgmii_3_rxd}),
-	.din({xgmii_2_txc, xgmii_2_txd})
+	.din(xgmii_3_rx)
+);
+`endif
+`ifdef ENABLE_PHY4
+xgmii2fifo72 rx4xgmii2fifo (
+	.sys_rst(sys_rst),
+	.xgmii_rx_clk(sys_clk),
+	.xgmii_rxd({xgmii_4_rxc,xgmii_4_rxd}),
+	.din(xgmii_4_rx)
 );
 `endif
 
@@ -210,7 +220,34 @@ fifo72toxgmii tx3fifo2gmii (
 
 // XGMII control characters
 // 07: Idle, FB:Start FD:Terminate FE:ERROR
-//
+
+//-----------------------------------
+// forwader RX0
+//-----------------------------------
+`ifdef NO
+forwader rx0forwader (
+	.sys_rst(sys_rst),
+	.sys_clk(sys_clk),
+
+	.port_num(2'h0),
+
+	.dout(rx0_phyq_dout),
+	.empty(rx0_phyq_empty),
+
+	.port0_din(rx0tx0_din),
+	.port0_full(rx0tx0_full),
+	.port0_half(rx0tx0_data_count[11]),
+	.port0_wr_en(rx0tx0_wr_en)
+);
+`endif
+assign xgmii_0_txc = xgmii_1_rx[71:64];
+assign xgmii_0_txd = xgmii_1_rx[63: 0];
+assign xgmii_1_txc = xgmii_0_rx[71:64];
+assign xgmii_1_txd = xgmii_0_rx[63: 0];
+assign xgmii_2_txc = xgmii_3_rx[71:64];
+assign xgmii_2_txd = xgmii_3_rx[63: 0];
+assign xgmii_3_txc = xgmii_2_rx[71:64];
+assign xgmii_3_txd = xgmii_2_rx[63: 0];
 
 assign led[7:4] = 4'h0;
 assign led[1:0] = {xphy_1_status[0], xphy_0_status[0]};
