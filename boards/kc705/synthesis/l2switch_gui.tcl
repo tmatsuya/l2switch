@@ -63,3 +63,7 @@ set_property flow {Vivado Implementation 2014} [get_runs impl_1]
 #
 #set_property include_dirs { ../testbench ../testbench/dsport ../include } [get_filesets sim_1]
 #
+
+#read_verilog "../test/l2switch_tb.v"
+#set_property USED_IN simulation [get_files ../test/l2switch_tb.v]
+

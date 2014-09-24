@@ -1,7 +1,7 @@
 `timescale 1ps / 1ps
 `define SIMULATION
 //`include "../rtl/setup.v"
-module tb_system();
+module l2switch_tb();
 
 /* 125MHz system clock */
 reg         sys_rst;
@@ -36,7 +36,7 @@ wire [7:0] led;
 wire [13:0] segled;
 reg btn;
 
-measure measure_inst (
+l2switch l2switch_inst (
          .sys_rst   (sys_rst),
          .sys_clk   (sys_clk),
 
