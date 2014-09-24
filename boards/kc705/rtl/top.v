@@ -281,9 +281,6 @@ assign xphy0_prtad = 5'd0;
 assign xphy0_signal_detect = 1'b1;
 assign nw0_reset = nw0_reset_i;
 
-wire [63:0] xgmii0_rxdtmp;
-wire [7:0] xgmii0_rxctmp;
-
 network_path network_path_inst_0 (
 	//XGEMAC PHY IO
 	.txusrclk(txusrclk),
@@ -322,16 +319,9 @@ network_path network_path_inst_0 (
 	.dclk(dclk_i),
 	.xgmii_txd(xgmii0_txd),
 	.xgmii_txc(xgmii0_txc),
-	.xgmii_rxd(xgmii0_rxdtmp),
-	.xgmii_rxc(xgmii0_rxctmp)
+	.xgmii_rxd(xgmii0_rxd),
+	.xgmii_rxc(xgmii0_rxc)
 ); 
-
-xgmii2fifo72 xgmii2_0 (
-	.sys_rst(sys_rst),
-	.xgmii_rx_clk(clk156),
-	.xgmii_rxd({xgmii0_rxctmp,xgmii0_rxdtmp}),
-	.din({xgmii0_rxc,xgmii0_rxd})
-);
 
 
 // ---------------
