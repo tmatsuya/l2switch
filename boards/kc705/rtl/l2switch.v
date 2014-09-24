@@ -228,16 +228,23 @@ fifo72toxgmii tx3fifo2gmii (
 forwader rx0forwader (
 	.sys_rst(sys_rst),
 	.sys_clk(sys_clk),
-
-	.port_num(2'h0),
-
-	.dout(rx0_phyq_dout),
-	.empty(rx0_phyq_empty),
-
-	.port0_din(rx0tx0_din),
-	.port0_full(rx0tx0_full),
-	.port0_half(rx0tx0_data_count[11]),
-	.port0_wr_en(rx0tx0_wr_en)
+	.xgmii_rx(xgmii_0_rx),
+	.port0_din(),
+	.port0_full(),
+	.port0_half(),
+	.port0_wr_en(),
+	.port1_din(rx0tx1_din),
+	.port1_full(rx0tx1_full),
+	.port1_half(rx0tx1_data_count[11]),
+	.port1_wr_en(rx0tx1_wr_en),
+	.port2_din(rx0tx2_din),
+	.port2_full(rx0tx2_full),
+	.port2_half(rx0tx2_data_count[11]),
+	.port2_wr_en(rx0tx2_wr_en),
+	.port3_din(rx0tx3_din),
+	.port3_full(rx0tx3_full),
+	.port3_half(rx0tx3_data_count[11]),
+	.port3_wr_en(rx0tx3_wr_en),
 );
 `endif
 assign xgmii_0_txc = xgmii_1_rx[71:64];
