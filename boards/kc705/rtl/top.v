@@ -593,7 +593,7 @@ xgbaser_gt_same_quad_wrapper xgbaser_gt_wrapper_inst_0 (
 // ---------------
 l2switch l2switch_inst (
 	.sys_rst(sys_rst),
-	.sys_clk(xgemac_clk_156),
+	.sys_clk(clk156),
 
 	.xgmii_0_txd(xgmii0_txd),
 	.xgmii_0_txc(xgmii0_txc),
