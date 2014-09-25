@@ -21,6 +21,11 @@ set_property used_in_synthesis true [get_files ./${impl_const}]
 import_ip -files {../ip_catalog/ten_gig_eth_pcs_pma_ip.xci} -name ten_gig_eth_pcs_pma_ip
 import_ip -files {../ip_catalog/sfifo72_10.xci} -name sfifo72_10
 
+set_property USED_IN {synthesis implementation} [get_files ../synthesis/runs/top.srcs/sources_1/ip/ten_gig_eth_pcs_pma_ip/ten_gig_eth_pcs_pma_ip.xci]
+set_property USED_IN {synthesis implementation} [get_files ../synthesis/runs/top.srcs/sources_1/ip/sfifo72_10/sfifo72_10.xci]
+#set_property USED_IN {synthesis implementation} [get_files /home/tmatsuya/l2switch/boards/kc705/synthesis/runs/top.srcs/sources_1/ip/ten_gig_eth_pcs_pma_ip/ten_gig_eth_pcs_pma_ip.xci]
+#set_property USED_IN {synthesis implementation} [get_files /home/tmatsuya/l2switch/boards/kc705/synthesis/runs/top.srcs/sources_1/ip/sfifo72_10/sfifo72_10.xci]
+
 # Other Custom logic sources/rtl files
 read_verilog "../rtl/network_path/xgbaser_gt_diff_quad_wrapper.v"
 read_verilog "../rtl/network_path/xgbaser_gt_same_quad_wrapper.v"
@@ -30,6 +35,12 @@ read_verilog "../rtl/top.v"
 read_verilog "../rtl/l2switch.v"
 read_verilog "../rtl/xgmii2fifo72.v"
 read_verilog "../rtl/fifo72toxgmii.v"
+
+set_property USED_IN {synthesis implementation} [get_files ../rtl/top.v]
+set_property USED_IN {synthesis implementation} [get_files ../rtl/network_path/xgbaser_gt_diff_quad_wrapper.v]
+set_property USED_IN {synthesis implementation} [get_files ../rtl/network_path/xgbaser_gt_same_quad_wrapper.v]
+set_property USED_IN {synthesis implementation} [get_files ../rtl/network_path/network_path.v]
+set_property USED_IN {synthesis implementation} [get_files ../rtl/network_path/ten_gig_eth_pcs_pma_ip_GT_Common_wrapper.v]
 
 
 # NGC files
@@ -64,6 +75,6 @@ set_property flow {Vivado Implementation 2014} [get_runs impl_1]
 #set_property include_dirs { ../testbench ../testbench/dsport ../include } [get_filesets sim_1]
 #
 
-#read_verilog "../test/l2switch_tb.v"
-#set_property USED_IN simulation [get_files ../test/l2switch_tb.v]
+read_verilog "../test/l2switch_tb.v"
+set_property USED_IN simulation [get_files ../test/l2switch_tb.v]
 

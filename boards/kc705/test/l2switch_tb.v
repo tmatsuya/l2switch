@@ -51,23 +51,16 @@ l2switch l2switch_inst (
 	.xgmii_1_rxd(xgmii_1_rxd),
 	.xgmii_1_rxc(xgmii_1_rxc),
 
-  // PCI user register
-	.tx0_enable(1'b1),
-	.tx0_ipv6(1'b0),
-	.tx0_fullroute(1'b0),
-	.tx0_req_arp(1'b0),
-	.tx0_frame_len(16'd68),
-	.tx0_inter_frame_gap(32'd1),
-	.tx0_ipv4_srcip({8'd192, 8'd168, 8'd1, 8'd101}),
-	.tx0_src_mac(48'h001122_334466),
-	.tx0_ipv4_gwip({8'd192, 8'd168, 8'd1, 8'd1}),
-	.tx0_ipv6_srcip(),
-	.tx0_ipv6_dstip(),
-//	.tx0_dst_mac(48'h001122_334455),
-	.tx0_ipv4_dstip({8'd192, 8'd168, 8'd2, 8'd102}),
-	.tx0_pps(),
-	.tx0_throughput(),
-	.tx0_ipv4_ip()
+	.xgmii_2_txd(xgmii_2_txd),
+	.xgmii_2_txc(xgmii_2_txc),
+	.xgmii_2_rxd(xgmii_2_rxd),
+	.xgmii_2_rxc(xgmii_2_rxc),
+
+	.xgmii_3_txd(xgmii_3_txd),
+	.xgmii_3_txc(xgmii_3_txc),
+	.xgmii_3_rxd(xgmii_3_rxd),
+	.xgmii_3_rxc(xgmii_3_rxc)
+
 );
 
 task waitclock;
@@ -105,7 +98,7 @@ end
 
 initial begin
         $dumpfile("./test.vcd");
-	$dumpvars(0, tb_system); 
+	$dumpvars(0, l2switch_tb); 
 	$readmemh("./tlp_data.hex", tlp_rom);
 	$readmemh("./phy_data.hex", phy_rom);
 	/* Reset / Initialize our logic */
