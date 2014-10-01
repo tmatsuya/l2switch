@@ -33,8 +33,12 @@ wire [7:0]  xgmii_3_rxc;
 // LED and Switches
 reg [7:0] dipsw;
 wire [7:0] led;
-wire [13:0] segled;
-reg btn;
+
+reg [71:0] xgmii_rom [0:4095];
+reg [11:0] xgmii_counter;
+wire [71:0] xgmii_cur;
+
+assign xgmii_cur = xgmii_rom[ xgmii_counter ];
 
 l2switch l2switch_inst (
          .sys_rst   (sys_rst),
@@ -43,8 +47,8 @@ l2switch l2switch_inst (
   // XGMII interfaces for 4 MACs
 	.xgmii_0_txd(xgmii_0_txd),
 	.xgmii_0_txc(xgmii_0_txc),
-	.xgmii_0_rxd(xgmii_0_rxd),
-	.xgmii_0_rxc(xgmii_0_rxc),
+	.xgmii_0_rxd(xgmii_cur[63:0]),
+	.xgmii_0_rxc(xgmii_cur[71:64]),
 
 	.xgmii_1_txd(xgmii_1_txd),
 	.xgmii_1_txc(xgmii_1_txc),
@@ -59,7 +63,15 @@ l2switch l2switch_inst (
 	.xgmii_3_txd(xgmii_3_txd),
 	.xgmii_3_txc(xgmii_3_txc),
 	.xgmii_3_rxd(xgmii_3_rxd),
-	.xgmii_3_rxc(xgmii_3_rxc)
+	.xgmii_3_rxc(xgmii_3_rxc),
+
+	.button_n(1'b0),
+	.button_s(1'b0),
+	.button_w(1'b0),
+	.button_e(1'b0),
+	.button_c(1'b0),
+	.dipsw(8'h0),
+	.led(led)
 
 );
 
@@ -70,39 +82,25 @@ begin
 end
 endtask
 
-always @(posedge sys_clk) begin
-	if (xgmii_0_txc != 8'hff)
-		$display("%x", xgmii_0_txd);
-end
-
-reg [23:0] tlp_rom [0:4095];
-reg [11:0] phy_rom [0:4095];
-reg [11:0] tlp_counter, phy_counter;
-wire [23:0] tlp_cur;
-wire [23:0] phy_cur;
-assign tlp_cur = tlp_rom[ tlp_counter ];
-assign phy_cur = phy_rom[ phy_counter ];
 
 always @(posedge sys_clk) begin
-//	rx_st   <= tlp_cur[20];
-//	rx_end  <= tlp_cur[16];
-//	rx_data <= tlp_cur[15:0];
-//	tlp_counter <= tlp_counter + 1;
+	if (sys_rst) begin
+		xgmii_counter <= 0;
+	end else begin
+		xgmii_counter <= xgmii_counter + 1;
+		if (xgmii_0_txc != 8'hff)
+			$display("%x", xgmii_0_txd);
+	end
 end
 
-always @(posedge sys_clk) begin
-//	gmii_rx_dv  <= phy_cur[8];
-//	gmii_rxd <= phy_cur[7:0];
-//	phy_counter <= phy_counter + 1;
-end
 
 initial begin
-        $dumpfile("./test.vcd");
+        $dumpfile("test.vcd");
 	$dumpvars(0, l2switch_tb); 
-	$readmemh("./tlp_data.hex", tlp_rom);
-	$readmemh("./phy_data.hex", phy_rom);
+	$readmemh("/home/tmatsuya/l2switch/boards/kc705/test/xgmii_data.hex", xgmii_rom);
 	/* Reset / Initialize our logic */
 	sys_rst = 1'b1;
+	xgmii_counter <= 0;
 
 	waitclock;
 	waitclock;
