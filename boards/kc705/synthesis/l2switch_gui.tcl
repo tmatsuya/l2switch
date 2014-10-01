@@ -12,8 +12,8 @@ create_project -name ${design_top} -force -dir "./${proj_dir}" -part ${device}
 set_property top ${design_top} [current_fileset]
 set_property verilog_define {{USE_VIVADO=1}} [current_fileset]
 
-#add_files -fileset constrs_1 -norecurse ../constraints/k7_conn_pcie.xdc
-#set_property used_in_synthesis true [get_files ../constraints/k7_conn_pcie.xdc]
+add_files -fileset constrs_1 -norecurse ../constraints/kc705_rgmii.xdc
+set_property used_in_synthesis true [get_files ../constraints/kc705_rgmii.xdc]
 add_files -fileset constrs_1 -norecurse ./${impl_const}
 set_property used_in_synthesis true [get_files ./${impl_const}]
 

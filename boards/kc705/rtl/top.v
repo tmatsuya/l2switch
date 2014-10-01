@@ -38,6 +38,27 @@ module top (
 	output wire fmc_ok_led,
 	input wire [1:0] fmc_gbtclk0_fsel,
 	output wire fmc_clk_312_5,
+`ifdef ENABLE_GMII
+	input wire sysclk_p,
+	input wire sysclk_n,
+	input wire sgmiiclk_p,
+	input wire sgmiiclk_n,
+	output wire gphy0_reset,
+	output wire gphy0_mdc,
+	output wire gphy0_mdio,
+	input wire gphy0_crs,
+	input wire gphy0_col,
+	input wire gphy0_rxclk,
+	input wire gphy0_rxdv,
+	input wire gphy0_rxer,
+	input wire [7:0] gphy0_rxd,
+	output wire gphy0_txclk,
+	output wire gphy0_gtxclk,
+	output wire gphy0_txen,
+	output wire gphy0_txer,
+	output wire [7:0] gphy0_txd,
+	output wire gphy0_int,
+`endif
 	// BUTTON
 	input wire button_n,
 	input wire button_s,
@@ -53,6 +74,22 @@ module top (
 // Clock and Reset
 wire sys_rst;
 assign sys_rst = button_c; // 1'b0;
+
+wire clk_200, clk_125;
+
+`ifdef ENABLE_GMII
+IBUFDS IBUFDS_clk_200 (
+	.I(sysclk_p),
+	.IB(sysclk_n),
+	.O(clk_200)
+);
+//IBUFDS IBUFDS_sgmiiclk_1 (
+//	.I (sgmiiclk_p),
+//	.IB(sgmiiclk_n),
+//	.O (clk_125)
+//);
+assign gphy0_gtxclk = clk_125;
+`endif
  
 // -------------------
 // -- Local Signals --
