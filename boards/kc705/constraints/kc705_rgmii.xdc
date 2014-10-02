@@ -4,11 +4,13 @@ set_property IOSTANDARD LVDS [get_ports sysclk_p]
 set_property PACKAGE_PIN AD11 [get_ports sysclk_n]
 set_property IOSTANDARD LVDS [get_ports sysclk_n]
 
+set_property CLOCK_DEDICATED_ROUTE FALSE [get_nets clk_200]
+
 #sgmiiclk (125MHz)
-set_property PACKAGE_PIN G8 [get_ports sgmiiclk_p]
-set_property IOSTANDARD LVDS [get_ports sgmiiclk_p]
-set_property PACKAGE_PIN G7 [get_ports sgmiiclk_n]
-set_property IOSTANDARD LVDS [get_ports sgmiiclk_n]
+#set_property PACKAGE_PIN G8 [get_ports sgmiiclk_p]
+#set_property IOSTANDARD LVDS [get_ports sgmiiclk_p]
+#set_property PACKAGE_PIN G7 [get_ports sgmiiclk_n]
+#set_property IOSTANDARD LVDS [get_ports sgmiiclk_n]
 
 set_property PACKAGE_PIN L20 [get_ports gphy0_reset]
 set_property IOSTANDARD LVCMOS25 [get_ports gphy0_reset]

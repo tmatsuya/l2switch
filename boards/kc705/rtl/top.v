@@ -41,8 +41,6 @@ module top (
 `ifdef ENABLE_GMII
 	input wire sysclk_p,
 	input wire sysclk_n,
-	input wire sgmiiclk_p,
-	input wire sgmiiclk_n,
 	output wire gphy0_reset,
 	output wire gphy0_mdc,
 	output wire gphy0_mdio,
@@ -76,6 +74,7 @@ wire sys_rst;
 assign sys_rst = button_c; // 1'b0;
 
 wire clk_200, clk_125;
+wire ibuf_clk_200;
 
 `ifdef ENABLE_GMII
 IBUFDS IBUFDS_clk_200 (
@@ -83,15 +82,91 @@ IBUFDS IBUFDS_clk_200 (
 	.IB(sysclk_n),
 	.O(clk_200)
 );
-//IBUFDS IBUFDS_sgmiiclk_1 (
-//	.I (sgmiiclk_p),
-//	.IB(sgmiiclk_n),
-//	.O (clk_125)
-//);
+wire clkfbout_clk_wiz_0;
+wire clkfbout_buf_clk_wiz_0;
+
+MMCME2_ADV
+  #(.BANDWIDTH            ("OPTIMIZED"),
+    .CLKOUT4_CASCADE      ("FALSE"),
+    .COMPENSATION         ("ZHOLD"),
+    .STARTUP_WAIT         ("FALSE"),
+    .DIVCLK_DIVIDE        (1),
+    .CLKFBOUT_MULT_F      (5.000),
+    .CLKFBOUT_PHASE       (0.000),
+    .CLKFBOUT_USE_FINE_PS ("FALSE"),
+    .CLKOUT0_DIVIDE_F     (8.000),
+    .CLKOUT0_PHASE        (0.000),
+    .CLKOUT0_DUTY_CYCLE   (0.500),
+    .CLKOUT0_USE_FINE_PS  ("FALSE"),
+    .CLKIN1_PERIOD        (5.0),
+    .REF_JITTER1          (0.010))
+  mmcm_125_inst
+    // Output clocks
+   (
+    .CLKFBOUT            (clkfbout_clk_wiz_0),
+    .CLKOUT0             (clk_125),
+     // Input clock control
+    .CLKFBIN             (clkfbout_buf_clk_wiz_0),
+    .CLKIN1              (ibuf_clk_200),
+    .CLKIN2              (1'b0),
+     // Tied to always select the primary input clock
+    .CLKINSEL            (1'b1),
+    // Ports for dynamic reconfiguration
+    .DADDR               (7'h0),
+    .DCLK                (1'b0),
+    .DEN                 (1'b0),
+    .DI                  (16'h0),
+    .DWE                 (1'b0),
+    // Ports for dynamic phase shift
+    .PSCLK               (1'b0),
+    .PSEN                (1'b0),
+    .PSINCDEC            (1'b0),
+    // Other control and status signals
+    .RST                 (sys_rst));
+IBUF clkin1_ibufg
+   (.O (ibuf_clk_200),
+    .I (clk_200));
+BUFG clkf_buf
+   (.O (clkfbout_buf_clk_wiz_0),
+    .I (clkfbout_clk_wiz_0));
+reg [11:0] count = 12'h0;
+reg txen = 1'b0;
+reg [7:0] txdata = 8'h00;
+always @(posedge clk_125) begin
+	case (count)
+		12'h00: begin
+			txen = 1'b1;
+			txdata = 8'h55;
+		end
+		12'h01: txdata = 8'h55;
+		12'h02: txdata = 8'h55;
+		12'h03: txdata = 8'h55;
+		12'h04: txdata = 8'h55;
+		12'h05: txdata = 8'h55;
+		12'h06: txdata = 8'h55;
+		12'h07: txdata = 8'hd5;
+		12'h08: txdata = 8'hff;
+		12'h09: txdata = 8'hff;
+		12'h0a: txdata = 8'hff;
+		12'h0b: txdata = 8'hff;
+		12'h0c: txdata = 8'hff;
+		12'h0d: txdata = 8'hff;
+		12'h0e: txdata = 8'hff;
+		12'h0f: txdata = 8'hff;
+		12'h48: begin
+			txen = 1'b0;
+			txdata = 8'h00;
+		end
+	endcase
+	count <= count + 12'd1;
+end
+
 assign gphy0_gtxclk = clk_125;
-assign gphy0_reset = sys_rst;
-assign gphy0_txen = 1'b0;
+assign gphy0_txclk = 1'b0;
+assign gphy0_reset = ~sys_rst;
+assign gphy0_txen = txen; //1'b0;
 assign gphy0_txer = 1'b0;
+assign gphy0_txd = txdata;
 assign gphy0_mdc = 1'b0;
 assign gphy0_mdio = 1'b0;
 `endif
