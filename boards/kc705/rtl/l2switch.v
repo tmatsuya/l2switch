@@ -251,10 +251,14 @@ assign xgmii_0_txc = xgmii_1_rx[71:64];
 assign xgmii_0_txd = xgmii_1_rx[63: 0];
 assign xgmii_1_txc = xgmii_0_rx[71:64];
 assign xgmii_1_txd = xgmii_0_rx[63: 0];
+`ifdef ENABLE_PHY2
 assign xgmii_2_txc = xgmii_3_rx[71:64];
 assign xgmii_2_txd = xgmii_3_rx[63: 0];
+`endif
+`ifdef ENABLE_PHY3
 assign xgmii_3_txc = xgmii_2_rx[71:64];
 assign xgmii_3_txd = xgmii_2_rx[63: 0];
+`endif
 
 assign led[7:4] = 4'h0;
 assign led[1:0] = {xphy_1_status[0], xphy_0_status[0]};

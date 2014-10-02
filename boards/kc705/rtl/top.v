@@ -89,6 +89,11 @@ IBUFDS IBUFDS_clk_200 (
 //	.O (clk_125)
 //);
 assign gphy0_gtxclk = clk_125;
+assign gphy0_reset = sys_rst;
+assign gphy0_txen = 1'b0;
+assign gphy0_txer = 1'b0;
+assign gphy0_mdc = 1'b0;
+assign gphy0_mdio = 1'b0;
 `endif
  
 // -------------------
