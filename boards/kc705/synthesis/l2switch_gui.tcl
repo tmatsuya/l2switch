@@ -34,6 +34,8 @@ read_verilog "../rtl/network_path/ten_gig_eth_pcs_pma_ip_GT_Common_wrapper.v"
 read_verilog "../rtl/top.v"
 read_verilog "../rtl/l2switch.v"
 read_verilog "../rtl/xgmii2fifo72.v"
+read_verilog "../rtl/gmii2xgmii.v"
+read_verilog "../rtl/xgmii2gmii.v"
 read_verilog "../rtl/fifo72toxgmii.v"
 
 set_property USED_IN {synthesis implementation} [get_files ../rtl/top.v]

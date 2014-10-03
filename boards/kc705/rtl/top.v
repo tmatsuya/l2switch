@@ -11,23 +11,25 @@ module top (
 	output wire xphy0_txn, 
 	input wire xphy0_rxp, 
 	input wire xphy0_rxn,
+`ifdef ENABLE_XGMII1
 	output wire xphy1_txp, 
 	output wire xphy1_txn, 
 	input wire xphy1_rxp, 
 	input wire xphy1_rxn,
-`ifdef ENABLE_PHY2
+`endif
+`ifdef ENABLE_XGMII2
 	output wire xphy2_txp, 
 	output wire xphy2_txn, 
 	input wire xphy2_rxp, 
 	input wire xphy2_rxn,
 `endif
-`ifdef ENABLE_PHY3
+`ifdef ENABLE_XGMII3
 	output wire xphy3_txp, 
 	output wire xphy3_txn, 
 	input wire xphy3_rxp, 
 	input wire xphy3_rxn,
 `endif
-`ifdef ENABLE_PHY4
+`ifdef ENABLE_XGMII4
 	input wire xphy4_refclk_p, 
 	input wire xphy4_refclk_n, 
 	output wire xphy4_txp, 
@@ -391,6 +393,7 @@ wire [63:0]	gt4_rxd;
 wire [7:0]	gt4_rxc;
 wire [2:0]	gt4_loopback;
 
+`ifdef ENABLE_XGMII0
 // ---------------
 // GT0 instance
 // ---------------
@@ -440,8 +443,10 @@ network_path network_path_inst_0 (
 	.xgmii_rxd(xgmii0_rxd),
 	.xgmii_rxc(xgmii0_rxc)
 ); 
+`endif
 
 
+`ifdef ENABLE_XGMII1
 // ---------------
 // GT1 instance
 // ---------------
@@ -491,8 +496,9 @@ network_path network_path_inst_1 (
 	.xgmii_rxd(xgmii1_rxd),
 	.xgmii_rxc(xgmii1_rxc)
 ); 
+`endif
 
-`ifdef ENABLE_PHY2
+`ifdef ENABLE_XGMII2
 // ---------------
 // GT2 instance
 // ---------------
@@ -544,7 +550,7 @@ network_path network_path_inst_2 (
 ); 
 `endif
 
-`ifdef ENABLE_PHY3
+`ifdef ENABLE_XGMII3
 // ---------------
 // GT3 instance
 // ---------------
@@ -596,7 +602,7 @@ network_path network_path_inst_3 (
 ); 
 `endif
 
-`ifdef ENABLE_PHY4
+`ifdef ENABLE_XGMII4
 // ---------------
 // GT4 instance
 // ---------------
@@ -706,6 +712,7 @@ xgbaser_gt_same_quad_wrapper xgbaser_gt_wrapper_inst_0 (
 
 
 
+`ifdef USE_L2SWITCH
 // ---------------
 // L2 switch
 // ---------------
@@ -713,19 +720,23 @@ l2switch l2switch_inst (
 	.sys_rst(sys_rst),
 	.sys_clk(clk156),
 
+`ifdef ENABLE_XGMII0
 	.xgmii_0_txd(xgmii0_txd),
 	.xgmii_0_txc(xgmii0_txc),
 	.xgmii_0_rxd(xgmii0_rxd),
 	.xgmii_0_rxc(xgmii0_rxc),
 	.xphy_0_status(xphy0_status),
+`endif
 
+`ifdef ENABLE_XGMII1
 	.xgmii_1_txd(xgmii1_txd),
 	.xgmii_1_txc(xgmii1_txc),
 	.xgmii_1_rxd(xgmii1_rxd),
 	.xgmii_1_rxc(xgmii1_rxc),
 	.xphy_1_status(xphy1_status),
+`endif
 
-`ifdef ENABLE_PHY2
+`ifdef ENABLE_XGMII2
 	.xgmii_2_txd(xgmii2_txd),
 	.xgmii_2_txc(xgmii2_txc),
 	.xgmii_2_rxd(xgmii2_rxd),
@@ -733,7 +744,7 @@ l2switch l2switch_inst (
 	.xphy_2_status(xphy2_status),
 `endif
 
-`ifdef ENABLE_PHY3
+`ifdef ENABLE_XGMII3
 	.xgmii_3_txd(xgmii3_txd),
 	.xgmii_3_txc(xgmii3_txc),
 	.xgmii_3_rxd(xgmii3_rxd),
@@ -749,6 +760,7 @@ l2switch l2switch_inst (
 	.dipsw(dipsw),
 	.led()
 );
+`endif		// USE_L2SWITCH
 
 assign led[0] = xphy0_status[0]; 
 assign led[1] = xphy1_status[0]; 

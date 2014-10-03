@@ -19,7 +19,7 @@ module l2switch (
 	input  wire  [7:0] xgmii_1_rxc,
 	input  wire  [7:0] xphy_1_status,
 
-`ifdef ENABLE_PHY2
+`ifdef ENABLE_XGMII2
 	output wire [63:0] xgmii_2_txd,
 	output wire  [7:0] xgmii_2_txc,
 	input  wire [63:0] xgmii_2_rxd,
@@ -27,7 +27,7 @@ module l2switch (
 	input  wire  [7:0] xphy_2_status,
 `endif
 
-`ifdef ENABLE_PHY3
+`ifdef ENABLE_XGMII3
 	output wire [63:0] xgmii_3_txd,
 	output wire  [7:0] xgmii_3_txc,
 	input  wire [63:0] xgmii_3_rxd,
@@ -50,7 +50,7 @@ module l2switch (
 wire  [71:0] xgmii_0_rx, xgmii_1_rx, xgmii_2_rx, xgmii_2_rx, xgmii_3_rx, xgmii_4_rx;
 
 //-----------------------------------
-// RX0,RX1,RX2,RX3_PHYQ FIFO
+// RX0,RX1,RX2,RX3_XGMIIQ FIFO
 //-----------------------------------
 //
 wire [71:0] rx0_phyq_din, rx0_phyq_dout;
@@ -94,7 +94,7 @@ sfifo72_10 rx1fifo (
 	.empty(rx1_phyq_empty),
 	.rd_en(rx1_phyq_rd_en)
 );
-`ifdef ENABLE_PHY2
+`ifdef ENABLE_XGMII2
 sfifo72_10 rx2fifo (
 	.clk(sys_clk),
 	.rst(sys_rst),
@@ -108,7 +108,7 @@ sfifo72_10 rx2fifo (
 	.rd_en(rx2_phyq_rd_en)
 );
 `endif
-`ifdef ENABLE_PHY3
+`ifdef ENABLE_XGMII3
 sfifo72_10 rx3fifo (
 	.clk(sys_clk),
 	.rst(sys_rst),
@@ -139,7 +139,7 @@ xgmii2fifo72 rx1xgmii2fifo (
 	.xgmii_rxd({xgmii_1_rxc,xgmii_1_rxd}),
 	.din(xgmii_1_rx)
 );
-`ifdef ENABLE_PHY2
+`ifdef ENABLE_XGMII2
 xgmii2fifo72 rx2xgmii2fifo (
 	.sys_rst(sys_rst),
 	.xgmii_rx_clk(sys_clk),
@@ -147,7 +147,7 @@ xgmii2fifo72 rx2xgmii2fifo (
 	.din(xgmii_2_rx)
 );
 `endif
-`ifdef ENABLE_PHY3
+`ifdef ENABLE_XGMII3
 xgmii2fifo72 rx3xgmii2fifo (
 	.sys_rst(sys_rst),
 	.xgmii_rx_clk(sys_clk),
@@ -155,7 +155,7 @@ xgmii2fifo72 rx3xgmii2fifo (
 	.din(xgmii_3_rx)
 );
 `endif
-`ifdef ENABLE_PHY4
+`ifdef ENABLE_XGMII4
 xgmii2fifo72 rx4xgmii2fifo (
 	.sys_rst(sys_rst),
 	.xgmii_rx_clk(sys_clk),
@@ -190,7 +190,7 @@ fifo72toxgmii tx1fifo2gmii (
 	.xgmii_tx_clk(sys_clk),
 	.xgmii_txd({xgmii_1_txc,xgmii_1_txd})
 );
-`ifdef ENABLE_PHY2
+`ifdef ENABLE_XGMII2
 fifo72toxgmii tx2fifo2gmii (
 	.sys_rst(sys_rst),
 
@@ -203,7 +203,7 @@ fifo72toxgmii tx2fifo2gmii (
 	.xgmii_txd({xgmii_2_txc,xgmii_2_txd})
 );
 `endif
-`ifdef ENABLE_PHY3
+`ifdef ENABLE_XGMII3
 fifo72toxgmii tx3fifo2gmii (
 	.sys_rst(sys_rst),
 
@@ -251,21 +251,21 @@ assign xgmii_0_txc = xgmii_1_rx[71:64];
 assign xgmii_0_txd = xgmii_1_rx[63: 0];
 assign xgmii_1_txc = xgmii_0_rx[71:64];
 assign xgmii_1_txd = xgmii_0_rx[63: 0];
-`ifdef ENABLE_PHY2
+`ifdef ENABLE_XGMII2
 assign xgmii_2_txc = xgmii_3_rx[71:64];
 assign xgmii_2_txd = xgmii_3_rx[63: 0];
 `endif
-`ifdef ENABLE_PHY3
+`ifdef ENABLE_XGMII3
 assign xgmii_3_txc = xgmii_2_rx[71:64];
 assign xgmii_3_txd = xgmii_2_rx[63: 0];
 `endif
 
 assign led[7:4] = 4'h0;
 assign led[1:0] = {xphy_1_status[0], xphy_0_status[0]};
-`ifdef ENABLE_PHY2
+`ifdef ENABLE_XGMII2
 assign led[2] = xphy_1_status[2];
 `endif
-`ifdef ENABLE_PHY3
+`ifdef ENABLE_XGMII3
 assign led[3] = xphy_1_status[3];
 `endif
 
