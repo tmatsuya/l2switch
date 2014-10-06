@@ -1,13 +1,17 @@
 `timescale 1ps / 1ps
 `define SIMULATION
-//`include "../rtl/setup.v"
+`include "../rtl/setup.v"
 module l2switch_tb();
 
-/* 125MHz system clock */
-reg         sys_rst;
-reg         sys_clk;	// clk156
-initial sys_clk = 1'b0;
-always #8 sys_clk = ~sys_clk;
+/* 125 and 156.25MHz clock */
+reg clk156, clk125;
+initial begin
+	clk125 = 0;
+	clk156 = 0;
+end
+always #8  clk156 = ~clk156;
+always #10 clk125 = ~clk125;
+reg sys_rst;
 
 // XGMII interfaces for 4 MACs
 wire [63:0] xgmii_0_txd;
@@ -20,15 +24,19 @@ wire [7:0]  xgmii_1_txc;
 reg  [63:0] xgmii_1_rxd;
 reg  [7:0]  xgmii_1_rxc;
 
+`ifdef ENABLE_XGMII2
 wire [63:0] xgmii_2_txd;
 wire [7:0]  xgmii_2_txc;
 reg  [63:0] xgmii_2_rxd;
 reg  [7:0]  xgmii_2_rxc;
+`endif
 
+`ifdef ENABLE_XGMII3
 wire [63:0] xgmii_3_txd;
 wire [7:0]  xgmii_3_txc;
 wire [63:0] xgmii_3_rxd;
 wire [7:0]  xgmii_3_rxc;
+`endif
 
 // LED and Switches
 reg [7:0] dipsw;
@@ -42,7 +50,7 @@ assign xgmii_cur = xgmii_rom[ xgmii_counter ];
 
 l2switch l2switch_inst (
          .sys_rst   (sys_rst),
-         .sys_clk   (sys_clk),
+         .sys_clk   (clk156),
 
   // XGMII interfaces for 4 MACs
 	.xgmii_0_txd(xgmii_0_txd),
@@ -55,15 +63,19 @@ l2switch l2switch_inst (
 	.xgmii_1_rxd(xgmii_1_rxd),
 	.xgmii_1_rxc(xgmii_1_rxc),
 
+`ifdef ENABLE_XGMII2
 	.xgmii_2_txd(xgmii_2_txd),
 	.xgmii_2_txc(xgmii_2_txc),
 	.xgmii_2_rxd(xgmii_2_rxd),
 	.xgmii_2_rxc(xgmii_2_rxc),
+`endif
 
+`ifdef ENABLE_XGMII3
 	.xgmii_3_txd(xgmii_3_txd),
 	.xgmii_3_txc(xgmii_3_txc),
 	.xgmii_3_rxd(xgmii_3_rxd),
 	.xgmii_3_rxc(xgmii_3_rxc),
+`endif
 
 	.button_n(1'b0),
 	.button_s(1'b0),
@@ -77,13 +89,13 @@ l2switch l2switch_inst (
 
 task waitclock;
 begin
-	@(posedge sys_clk);
+	@(posedge clk156);
 	#1;
 end
 endtask
 
 
-always @(posedge sys_clk) begin
+always @(posedge clk156) begin
 	if (sys_rst) begin
 		xgmii_counter <= 0;
 	end else begin
