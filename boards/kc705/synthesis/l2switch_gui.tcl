@@ -20,6 +20,7 @@ set_property used_in_synthesis true [get_files ./${impl_const}]
 # Project Design Files from IP Catalog (comment out IPs using legacy Coregen cores)
 import_ip -files {../ip_catalog/ten_gig_eth_pcs_pma_ip.xci} -name ten_gig_eth_pcs_pma_ip
 import_ip -files {../ip_catalog/sfifo72_10.xci} -name sfifo72_10
+import_ip -files {../ip_catalog/afifo72_11r.xci} -name afifo72_11r
 
 set_property USED_IN {synthesis implementation} [get_files ../synthesis/runs/top.srcs/sources_1/ip/ten_gig_eth_pcs_pma_ip/ten_gig_eth_pcs_pma_ip.xci]
 set_property USED_IN {synthesis implementation} [get_files ../synthesis/runs/top.srcs/sources_1/ip/sfifo72_10/sfifo72_10.xci]
