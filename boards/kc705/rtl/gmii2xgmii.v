@@ -29,23 +29,23 @@ afifo72_11r afifo72_11r_0 (
 );
 
 //-----------------------------------
-// logic
+// read from GMII logic
 //-----------------------------------
-reg [71:0] rxd = 72'h00;
-reg start = 1'b0;
 always @(posedge gmii_clk) begin
 	if (sys_rst) begin
-		rxd <= 72'h00;
-		start <= 1'b0;
 	end else begin
-		if (xgmii_rxd[71:64] != 8'hff || xgmii_rxd[7:0] != 8'h07) begin
-			if (start == 1'b1) begin
-				if (xgmii_rxd[68] == 1'b0) begin
-					rxd[71:0] <= xgmii_rxd[71:0];
-				end
-			end
-			start <= 1'b0;
+		if (gmii_dv) begin
+		end else begin
 		end
+	end
+end
+
+//-----------------------------------
+// write to XGMII logic
+//-----------------------------------
+always @(posedge xgmii_clk) begin
+	if (sys_rst) begin
+	end else begin
 	end
 end
 
