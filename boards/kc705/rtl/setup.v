@@ -1,7 +1,7 @@
 `define ENABLE_XGMII0
-//`define ENABLE_XGMII1
+`define ENABLE_XGMII1
 //`define ENABLE_XGMII2
 //`define ENABLE_XGMII3
 //`define ENABLE_XGMII4
-`define ENABLE_GMII
-//`define USE_L2SWITCH
+`define ENABLE_GMII0
+`define USE_L2SWITCH

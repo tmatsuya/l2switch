@@ -752,6 +752,15 @@ l2switch l2switch_inst (
 	.xphy_3_status(xphy3_status),
 `endif
 
+`ifdef ENABLE_GMII
+	.gmii_0_rxclk(gphy0_rxclk),
+	.gmii_0_rxdv(gphy0_rxdv),
+	.gmii_0_rxd(gphy0_rxd),
+	.gmii_0_gtxclk(gphy0_gtxclk),
+	.gmii_0_txen(gphy0_txen),
+	.gmii_0_txd(gphy0_txd),
+`endif
+
 	.button_n(button_n),
 	.button_s(button_s),
 	.button_w(button_w),

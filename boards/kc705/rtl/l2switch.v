@@ -35,6 +35,14 @@ module l2switch (
 	input  wire  [7:0] xphy_3_status,
 `endif
 
+	// GMII interface
+        input  wire        gmii_0_rxclk,
+        input  wire        gmii_0_rxdv,
+        input  wire  [7:0] gmii_0_rxd,
+        input  wire        gmii_0_gtxclk,
+        output wire        gmii_0_txen,
+        output wire  [7:0] gmii_0_txd,
+
 	// ---- BUTTON
 	input  wire  button_n,
 	input  wire  button_s,
@@ -47,12 +55,11 @@ module l2switch (
 	output wire [7:0] led		   
 );
 
-wire  [71:0] xgmii_0_rx, xgmii_1_rx, xgmii_2_rx, xgmii_2_rx, xgmii_3_rx, xgmii_4_rx;
+wire  [71:0] xgmii_0_rx, xgmii_1_rx, xgmii_2_rx, xgmii_2_rx, xgmii_3_rx, xgmii_4_rx, xgmii_5_rx;
 
 //-----------------------------------
 // RX0,RX1,RX2,RX3_XGMIIQ FIFO
 //-----------------------------------
-//
 wire [71:0] rx0_phyq_din, rx0_phyq_dout;
 wire rx0_phyq_full, rx0_phyq_wr_en;
 wire rx0_phyq_empty, rx0_phyq_rd_en;
@@ -94,7 +101,6 @@ sfifo72_10 rx1fifo (
 	.empty(rx1_phyq_empty),
 	.rd_en(rx1_phyq_rd_en)
 );
-`ifdef ENABLE_XGMII2
 sfifo72_10 rx2fifo (
 	.clk(sys_clk),
 	.rst(sys_rst),
@@ -107,8 +113,6 @@ sfifo72_10 rx2fifo (
 	.empty(rx2_phyq_empty),
 	.rd_en(rx2_phyq_rd_en)
 );
-`endif
-`ifdef ENABLE_XGMII3
 sfifo72_10 rx3fifo (
 	.clk(sys_clk),
 	.rst(sys_rst),
@@ -121,7 +125,6 @@ sfifo72_10 rx3fifo (
 	.empty(rx3_phyq_empty),
 	.rd_en(rx3_phyq_rd_en)
 );
-`endif
 `endif
 
 //-----------------------------------
@@ -155,7 +158,7 @@ xgmii2fifo72 rx3xgmii2fifo (
 	.din(xgmii_3_rx)
 );
 `endif
-`ifdef ENABLE_XGMII4
+`ifdef NO
 xgmii2fifo72 rx4xgmii2fifo (
 	.sys_rst(sys_rst),
 	.xgmii_rx_clk(sys_clk),
@@ -190,7 +193,6 @@ fifo72toxgmii tx1fifo2gmii (
 	.xgmii_tx_clk(sys_clk),
 	.xgmii_txd({xgmii_1_txc,xgmii_1_txd})
 );
-`ifdef ENABLE_XGMII2
 fifo72toxgmii tx2fifo2gmii (
 	.sys_rst(sys_rst),
 
@@ -202,8 +204,6 @@ fifo72toxgmii tx2fifo2gmii (
 	.xgmii_tx_clk(sys_clk),
 	.xgmii_txd({xgmii_2_txc,xgmii_2_txd})
 );
-`endif
-`ifdef ENABLE_XGMII3
 fifo72toxgmii tx3fifo2gmii (
 	.sys_rst(sys_rst),
 
@@ -216,7 +216,20 @@ fifo72toxgmii tx3fifo2gmii (
 	.xgmii_txd({xgmii_3_txc,xgmii_3_txd})
 );
 `endif
-`endif
+
+//-----------------------------------
+// GMII to XGMII module
+//-----------------------------------
+gmii2xgmii gmii2xgmii_inst_0 (
+	.sys_rst(sys_rst),
+	.gmii_clk(gmii_0_rxclk),
+	.gmii_dv(gmii_0_rxdv),
+	.gmii_rxd(gmii_0_rxd),
+	.xgmii_clk(sys_clk),
+	.xgmii_rxc(xgmii_5_rx[71:64]),
+	.xgmii_rxd(xgmii_5_rx[63:0])
+);
+
 
 // XGMII control characters
 // 07: Idle, FB:Start FD:Terminate FE:ERROR
@@ -263,10 +276,10 @@ assign xgmii_3_txd = xgmii_2_rx[63: 0];
 assign led[7:4] = 4'h0;
 assign led[1:0] = {xphy_1_status[0], xphy_0_status[0]};
 `ifdef ENABLE_XGMII2
-assign led[2] = xphy_1_status[2];
+assign led[2]   = xphy_2_status[0];
 `endif
 `ifdef ENABLE_XGMII3
-assign led[3] = xphy_1_status[3];
+assign led[3]   = xphy_3_status[0];
 `endif
 
 endmodule

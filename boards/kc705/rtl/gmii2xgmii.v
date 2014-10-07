@@ -12,13 +12,29 @@ module gmii2xgmii (
 
 
 //-----------------------------------
+// AFIFO
+//-----------------------------------
+afifo72_11r afifo72_11r_0 (
+	.rst(sys_rst),
+	.wr_clk(gmii_clk),
+	.rd_clk(xgmii_clk),
+	.din(),
+	.wr_en(),
+	.rd_en(),
+	.dout(),
+	.full(),
+	.empty()
+);
+
+
+//-----------------------------------
 // logic
 //-----------------------------------
 reg [71:0] rxd = 72'h00;
 reg [35:0] rxd2 = 36'h00;
 reg start = 1'b0;
 reg quad_shift = 1'b0;
-always @(posedge xgmii_rx_clk) begin
+always @(posedge xgmii_clk) begin
 	if (sys_rst) begin
 		rxd <= 72'h00;
 		rxd2 <= 36'h00;
@@ -54,8 +70,6 @@ always @(posedge xgmii_rx_clk) begin
 		end
 	end
 end
-
-assign din[71:0] = rxd[71:0];
 
 endmodule
 `default_nettype wire
