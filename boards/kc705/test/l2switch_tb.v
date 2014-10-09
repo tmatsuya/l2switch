@@ -140,7 +140,7 @@ end
 
 
 initial begin
-        $dumpfile("test.vcd");
+    $dumpfile("test.vcd");
 	$dumpvars(0, l2switch_tb); 
 	$readmemh("/home/tmatsuya/l2switch/boards/kc705/test/xgmii_data.hex", xgmii_rom);
 	$readmemh("/home/tmatsuya/l2switch/boards/kc705/test/gmii_data.hex", gmii_rom);
