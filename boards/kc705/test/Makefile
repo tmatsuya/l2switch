@@ -1,10 +1,11 @@
 SOURCES=$(wildcard *.v) \
 	$(wildcard ../../../cores/crc32/rtl/*.v) \
 	$(wildcard ../rtl/measure_core.v) \
-	$(wildcard ../rtl/measure.v)
+	$(wildcard ../rtl/measure.v) \
+	$(wildcard ../../../cores/gmii2xgmii/rtl/*.v)
 
 #all: cversim
-all: tlp_data.hex phy_data.hex isim
+all: xgmii_data.hex gmii_data.hex isim
 
 gtk: all
 	gtkwave test.vcd
