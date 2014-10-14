@@ -20,6 +20,7 @@ module gmii2xgmii #(
 wire [71:0] rx0_phyq_din, rx0_phyq_dout;
 wire rx0_phyq_full, rx0_phyq_wr_en;
 wire rx0_phyq_empty, rx0_phyq_rd_en;
+
 afifo72_11r afifo72_11r_0 (
 	.rst(sys_rst),
 	.wr_clk(gmii_clk),
