@@ -40,7 +40,7 @@ module top (
 	output wire fmc_ok_led,
 	input wire [1:0] fmc_gbtclk0_fsel,
 	output wire fmc_clk_312_5,
-`ifdef ENABLE_GMII
+`ifdef ENABLE_GMII0
 	input wire sysclk_p,
 	input wire sysclk_n,
 	output wire gphy0_reset,
@@ -78,7 +78,7 @@ assign sys_rst = button_c; // 1'b0;
 wire clk_200, clk_125;
 wire ibuf_clk_200;
 
-`ifdef ENABLE_GMII
+`ifdef ENABLE_GMII0
 IBUFDS IBUFDS_clk_200 (
 	.I(sysclk_p),
 	.IB(sysclk_n),
@@ -752,7 +752,7 @@ l2switch l2switch_inst (
 	.xphy_3_status(xphy3_status),
 `endif
 
-`ifdef ENABLE_GMII
+`ifdef ENABLE_GMII0
 	.gmii_0_rxclk(gphy0_rxclk),
 	.gmii_0_rxdv(gphy0_rxdv),
 	.gmii_0_rxd(gphy0_rxd),
