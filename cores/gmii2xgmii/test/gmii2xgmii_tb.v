@@ -1,3 +1,4 @@
+`timescale 1ps / 1ps
 `define SIMULATION
 module gmii2xgmii_tb();
 
