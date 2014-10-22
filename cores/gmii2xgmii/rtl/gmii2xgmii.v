@@ -1,10 +1,6 @@
 `default_nettype none
 
-module gmii2xgmii #(
-	parameter FRAME_MAX_BIT_WIDTH = 11,	// 11:2048 12:4096 13:8192 14:16384
-	parameter VALUE0 = 11'd0,
-	parameter VALUE1 = 11'd1
-) (
+module gmii2xgmii (
 	input  wire        sys_rst,
 	input  wire        gmii_clk,
 	input  wire        gmii_dv,
@@ -36,57 +32,84 @@ afifo72_11r afifo72_11r_0 (
 //-----------------------------------
 // read from GMII logic
 //-----------------------------------
-reg [FRAME_MAX_BIT_WIDTH-1:0] rx_count;
+reg rx_dv;
+reg rx_ctl;
+reg [7:0] rx_data;
+reg [1:0] state1 = 2'b0;
+reg [2:0] col = 3'd0;
+
+parameter STATE1_IDLE = 2'b00;
+parameter STATE1_DV   = 2'b01;
+parameter STATE1_IFG  = 2'b10;
+
+always @(posedge gmii_clk) begin
+	if (sys_rst) begin
+		rx_dv <= 1'b0;
+		rx_ctl <= 1'b0;
+		rx_data <= 8'h00;
+		state1 <= STATE1_IDLE;
+		col <= 3'd0;
+	end else begin
+		rx_ctl <= 1'b1;
+		col <= col + 3'd1;
+		case (state1)
+			STATE1_IDLE: begin
+				col <= 3'd0;
+				if (gmii_dv) begin
+					rx_dv <= 1'b1;
+					rx_data <= 8'hfb;
+					col <= 3'd0;
+					state1 <= STATE1_DV;
+				end else
+					rx_dv <= 1'b0;
+			end
+			STATE1_DV: begin
+				if (gmii_dv) begin
+					rx_ctl <= 1'b0;
+					rx_data <= gmii_rxd;
+				end else begin
+					rx_data <= 8'hfd;
+					state1 <= STATE1_IFG;
+				end
+			end
+			STATE1_IFG: begin
+				rx_data <= 8'h07;
+				col <= col - 3'd1;
+				if (col == 3'd0) begin
+					state1 <= STATE1_IDLE;
+				end
+			end
+		endcase
+	end
+end
+
 reg [7:0] xgmii_c;
 reg [63:0] xgmii_d;
 reg fifo_wr_en;
+reg [2:0] rx_count;
+
 always @(posedge gmii_clk) begin
 	if (sys_rst) begin
-		rx_count <= VALUE0;
-		xgmii_c <= 8'h01;
-		xgmii_d <= 64'hd5_55_55_55_55_55_55_fb;
+		rx_count <= 3'd0;
+		xgmii_c <= 8'hff;
+		xgmii_d <= 64'h07_07_07_07_07_07_07_07;
 		fifo_wr_en <= 1'b0;
 	end else begin
 		fifo_wr_en <= 1'b0;
-		if (gmii_dv) begin
-			rx_count <= rx_count + VALUE1;
-			if (rx_count[2:0] == 3'd7) begin
+		if (rx_dv) begin
+			rx_count <= rx_count + 3'd1;
+			if (rx_count == 3'd7) begin
 				fifo_wr_en <= 1'b1;
 			end
-			if (rx_count[FRAME_MAX_BIT_WIDTH-1:3] != 0) begin
-				xgmii_c <= 8'h00;
-				xgmii_d <= {gmii_rxd, xgmii_d[63:8]};
-			end
+			xgmii_c <= {rx_ctl, xgmii_c[7:1]};
+			xgmii_d <= {rx_data, xgmii_d[63:8]};
 		end else begin
-			if (rx_count != VALUE0) begin
-				case (rx_count[2:0])
-					3'h0: begin
-						xgmii_c <= 8'hff;
-						xgmii_d <= 64'h07_07_07_07_07_07_07_fd;
-					end
-					3'h1: begin
-						xgmii_c <= 8'hfe;
-						xgmii_d <= {56'h07_07_07_07_07_07_fd, xgmii_d[63:56]};
-					end
-					3'h2: begin
-						xgmii_c <= 8'hfc;
-						xgmii_d <= {48'h07_07_07_07_07_fd, xgmii_d[63:48]};
-					end
-					3'h3: begin
-						xgmii_c <= 8'hf8;
-						xgmii_d <= {40'h07_07_07_07_fd, xgmii_d[63:40]};
-					end
-					3'h4: begin
-						xgmii_c <= 8'hf0;
-						xgmii_d <= {32'h07_07_07_fd, xgmii_d[63:32]};
-					end
-				endcase
+			xgmii_c <= 8'hff;
+			xgmii_d <= 64'h07_07_07_07_07_07_07_07;
+			if (rx_count != 3'd0) begin
 				fifo_wr_en <= 1'b1;
-			end else begin
-				xgmii_c <= 8'h01;
-				xgmii_d <= 64'hd5_55_55_55_55_55_55_fb;
+				rx_count <= rx_count + 3'd1;
 			end
-			rx_count <= VALUE0;
 		end
 	end
 end

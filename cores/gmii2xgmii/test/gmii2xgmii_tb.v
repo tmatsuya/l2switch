@@ -24,9 +24,7 @@ reg  [ 7:0] gmii_rxd;
 wire        xgmii_clk;
 wire [ 7:0] xgmii_rxc;
 
-gmii2xgmii # (
-	.FRAME_MAX_BIT_WIDTH(11)     // 11:2048 12:4096 13:8192 14:16384
-)  gmii2xgmii_inst (
+gmii2xgmii gmii2xgmii_inst (
 	.sys_rst(sys_rst),
 	// GMII interface
 	.gmii_clk(clk125),
