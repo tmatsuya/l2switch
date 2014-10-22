@@ -163,9 +163,20 @@ always @(posedge clk_125) begin
 	count <= count + 12'd1;
 end
 
+reg [7:0] cold_counter = 8'h0;
+reg cold_reset = 1'b0;
+
+always @(posedge clk_125) begin
+	if (cold_counter != 8'hff) begin
+		cold_reset <= 1'b1;
+		cold_counter <= cold_counter + 8'd1;
+	end else
+		cold_reset <= 1'b0;
+end
+
 assign gphy0_gtxclk = clk_125;
 assign gphy0_txclk = 1'b0;
-assign gphy0_reset = ~sys_rst;
+assign gphy0_reset = ~(sys_rst | cold_reset);
 assign gphy0_txen = txen; //1'b0;
 assign gphy0_txer = 1'b0;
 assign gphy0_txd = txdata;
