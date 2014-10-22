@@ -6,8 +6,8 @@ module gmii2xgmii (
 	input  wire        gmii_dv,
 	input  wire [ 7:0] gmii_rxd,
 	input  wire        xgmii_clk,
-	output wire [ 7:0] xgmii_rxc,
-	output wire [63:0] xgmii_rxd
+	output reg [ 7:0]  xgmii_rxc,
+	output reg [63:0]  xgmii_rxd
 );
 
 //-----------------------------------
@@ -15,7 +15,8 @@ module gmii2xgmii (
 //-----------------------------------
 wire [71:0] rx0_phyq_din, rx0_phyq_dout;
 wire rx0_phyq_full, rx0_phyq_wr_en;
-wire rx0_phyq_empty, rx0_phyq_rd_en;
+wire rx0_phyq_empty;
+reg rx0_phyq_rd_en;
 
 afifo72_11r afifo72_11r_0 (
 	.rst(sys_rst),
@@ -35,48 +36,48 @@ afifo72_11r afifo72_11r_0 (
 reg rx_dv;
 reg rx_ctl;
 reg [7:0] rx_data;
-reg [1:0] state1 = 2'b0;
 reg [2:0] col = 3'd0;
+reg [1:0] gmii_state = 2'b0;
 
-parameter STATE1_IDLE = 2'b00;
-parameter STATE1_DV   = 2'b01;
-parameter STATE1_IFG  = 2'b10;
+parameter GMII_STATE_IDLE = 2'b00;
+parameter GMII_STATE_DV   = 2'b01;
+parameter GMII_STATE_IFG  = 2'b10;
 
 always @(posedge gmii_clk) begin
 	if (sys_rst) begin
 		rx_dv <= 1'b0;
 		rx_ctl <= 1'b0;
 		rx_data <= 8'h00;
-		state1 <= STATE1_IDLE;
 		col <= 3'd0;
+		gmii_state <= GMII_STATE_IDLE;
 	end else begin
 		rx_ctl <= 1'b1;
 		col <= col + 3'd1;
-		case (state1)
-			STATE1_IDLE: begin
+		case (gmii_state)
+			GMII_STATE_IDLE: begin
 				col <= 3'd0;
 				if (gmii_dv) begin
 					rx_dv <= 1'b1;
 					rx_data <= 8'hfb;
 					col <= 3'd0;
-					state1 <= STATE1_DV;
+					gmii_state <= GMII_STATE_DV;
 				end else
 					rx_dv <= 1'b0;
 			end
-			STATE1_DV: begin
+			GMII_STATE_DV: begin
 				if (gmii_dv) begin
 					rx_ctl <= 1'b0;
 					rx_data <= gmii_rxd;
 				end else begin
 					rx_data <= 8'hfd;
-					state1 <= STATE1_IFG;
+					gmii_state <= GMII_STATE_IFG;
 				end
 			end
-			STATE1_IFG: begin
+			GMII_STATE_IFG: begin
 				rx_data <= 8'h07;
 				col <= col - 3'd1;
 				if (col == 3'd0) begin
-					state1 <= STATE1_IDLE;
+					gmii_state <= GMII_STATE_IDLE;
 				end
 			end
 		endcase
@@ -87,6 +88,7 @@ reg [7:0] xgmii_c;
 reg [63:0] xgmii_d;
 reg fifo_wr_en;
 reg [2:0] rx_count;
+reg gmii_frame_end;
 
 always @(posedge gmii_clk) begin
 	if (sys_rst) begin
@@ -94,8 +96,10 @@ always @(posedge gmii_clk) begin
 		xgmii_c <= 8'hff;
 		xgmii_d <= 64'h07_07_07_07_07_07_07_07;
 		fifo_wr_en <= 1'b0;
+		gmii_frame_end <= 1'b0;
 	end else begin
 		fifo_wr_en <= 1'b0;
+		gmii_frame_end <= 1'b0;
 		if (rx_dv) begin
 			rx_count <= rx_count + 3'd1;
 			if (rx_count == 3'd7) begin
@@ -107,6 +111,7 @@ always @(posedge gmii_clk) begin
 			xgmii_c <= 8'hff;
 			xgmii_d <= 64'h07_07_07_07_07_07_07_07;
 			if (rx_count != 3'd0) begin
+				gmii_frame_end <= 1'b1;
 				fifo_wr_en <= 1'b1;
 				rx_count <= rx_count + 3'd1;
 			end
@@ -118,11 +123,67 @@ assign rx0_phyq_wr_en = fifo_wr_en;
 assign rx0_phyq_din = {xgmii_c, xgmii_d};
 
 //-----------------------------------
-// write to XGMII logic
+// count GMII and XGMII frame
 //-----------------------------------
+reg [7:0] gmii_packet_count;		// receive GMII packet count
+reg [3:0] prev_gmii_end;
 always @(posedge xgmii_clk) begin
 	if (sys_rst) begin
+		gmii_packet_count <= 8'h0;
+		prev_gmii_end <= 4'b0000;
 	end else begin
+		prev_gmii_end <= {gmii_frame_end, prev_gmii_end[3:1]};
+		if (prev_gmii_end == 4'b0001)
+			gmii_packet_count <= gmii_packet_count + 8'd1;
+	end
+end
+
+//-----------------------------------
+// write to XGMII logic
+//-----------------------------------
+reg [7:0] xgmii_packet_count;		// transmit XGMII packet count
+reg xgmii_find_data = 1'b0;
+reg [1:0] xgmii_state = 2'b0;
+
+parameter XGMII_STATE_IDLE = 2'b00;
+parameter XGMII_STATE_SEND = 2'b01;
+parameter XGMII_STATE_IFG  = 2'b10;
+always @(posedge xgmii_clk) begin
+	if (sys_rst) begin
+		rx0_phyq_rd_en <= 1'b0;
+		xgmii_packet_count <= 8'h0;
+		xgmii_rxc <= 8'hff;
+		xgmii_rxd <= 64'h07_07_07_07_07_07_07_07;
+		xgmii_find_data <= 1'b0;
+		xgmii_state <= XGMII_STATE_IDLE;
+	end else begin
+		rx0_phyq_rd_en <= 1'b0;
+		xgmii_rxc <= 8'hff;
+		xgmii_rxd <= 64'h07_07_07_07_07_07_07_07;
+		case (xgmii_state)
+			XGMII_STATE_IDLE: begin
+				if (gmii_packet_count != xgmii_packet_count) begin
+					xgmii_find_data <= 1'b0;
+					xgmii_state <= XGMII_STATE_SEND;
+				end
+			end
+			XGMII_STATE_SEND: begin
+				rx0_phyq_rd_en <= ~rx0_phyq_empty;
+				if (rx0_phyq_rd_en) begin
+					xgmii_rxc <= rx0_phyq_dout[71:64];
+					xgmii_rxd <= rx0_phyq_dout[63: 0];
+					if (rx0_phyq_dout[71:64] == 8'hff) begin
+						if (xgmii_find_data)
+							xgmii_state <= XGMII_STATE_IFG;
+					end else
+						xgmii_find_data <= 1'b1;
+				end
+			end
+			XGMII_STATE_IFG: begin
+				xgmii_packet_count <= xgmii_packet_count + 8'd1;
+				xgmii_state <= XGMII_STATE_IDLE;
+			end
+		endcase
 	end
 end
 
