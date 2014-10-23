@@ -46,8 +46,8 @@ parameter GMII_STATE_IFG  = 2'b10;
 always @(posedge gmii_clk) begin
 	if (sys_rst) begin
 		rx_dv <= 1'b0;
-		rx_ctl <= 1'b0;
-		rx_data <= 8'h00;
+		rx_ctl <= 1'b1;
+		rx_data <= 8'h07;
 		col <= 3'd0;
 		gmii_state <= GMII_STATE_IDLE;
 	end else begin
@@ -75,8 +75,7 @@ always @(posedge gmii_clk) begin
 			end
 			GMII_STATE_IFG: begin
 				rx_data <= 8'h07;
-				col <= col - 3'd1;
-				if (col == 3'd0) begin
+				if (col == 3'd7) begin
 					gmii_state <= GMII_STATE_IDLE;
 				end
 			end
@@ -123,7 +122,7 @@ assign rx0_phyq_wr_en = fifo_wr_en;
 assign rx0_phyq_din = {xgmii_c, xgmii_d};
 
 //-----------------------------------
-// count GMII and XGMII frame
+// count GMII frame
 //-----------------------------------
 reg [7:0] gmii_packet_count;		// receive GMII packet count
 reg [3:0] prev_gmii_end;
