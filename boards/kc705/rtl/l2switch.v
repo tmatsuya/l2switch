@@ -265,8 +265,8 @@ assign xgmii_0_txd = xgmii_1_rx[63: 0];
 assign xgmii_1_txc = xgmii_0_rx[71:64];
 assign xgmii_1_txd = xgmii_0_rx[63: 0];
 `ifdef ENABLE_XGMII2
-assign xgmii_2_txc = xgmii_3_rx[71:64];
-assign xgmii_2_txd = xgmii_3_rx[63: 0];
+assign xgmii_2_txc = xgmii_5_rx[71:64];
+assign xgmii_2_txd = xgmii_5_rx[63: 0];
 `endif
 `ifdef ENABLE_XGMII3
 assign xgmii_3_txc = xgmii_2_rx[71:64];
