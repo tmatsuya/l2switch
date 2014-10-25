@@ -17,8 +17,9 @@ wire [71:0] tx0_phyq_din, tx0_phyq_dout;
 wire tx0_phyq_full;
 reg tx0_phyq_wr_en;
 wire tx0_phyq_empty, tx0_phyq_rd_en;
+wire tx0_phyq_prog_full;
 
-afifo72_11r afifo72_11r_0 (
+afifo72_12w afifo72_12w_0 (
 	.rst(sys_rst),
 	.wr_clk(xgmii_clk),
 	.rd_clk(gmii_clk),
@@ -27,7 +28,8 @@ afifo72_11r afifo72_11r_0 (
 	.rd_en(tx0_phyq_rd_en),
 	.dout(tx0_phyq_dout),
 	.full(tx0_phyq_full),
-	.empty(tx0_phyq_empty)
+	.empty(tx0_phyq_empty),
+	.prog_full(tx0_phyq_prog_full)
 );
 
 //-----------------------------------

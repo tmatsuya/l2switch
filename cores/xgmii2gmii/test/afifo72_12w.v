@@ -1,5 +1,5 @@
 `default_nettype none
-module afifo72_11r (
+module afifo72_12w (
 	input wire rst,
 	input wire wr_clk,
 	input wire rd_clk,
@@ -8,12 +8,13 @@ module afifo72_11r (
 	input wire rd_en,
 	output wire [71:0] dout,
 	output wire full,
-	output wire empty
+	output wire empty,
+	output wire prog_full
 );
 
 asfifo # (
 	.DATA_WIDTH(72),
-	.ADDRESS_WIDTH(11)
+	.ADDRESS_WIDTH(12)
 ) asfifo_inst (
 	.dout(dout), 
 	.empty(empty),
@@ -25,6 +26,8 @@ asfifo # (
 	.wr_clk(wr_clk),
 	.rst(rst)
 );
+
+assign prog_full = 1'b0;
 
 endmodule
 `default_nettype wire

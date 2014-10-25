@@ -21,6 +21,7 @@ set_property used_in_synthesis true [get_files ./${impl_const}]
 import_ip -files {../ip_catalog/ten_gig_eth_pcs_pma_ip.xci} -name ten_gig_eth_pcs_pma_ip
 import_ip -files {../ip_catalog/sfifo72_10.xci} -name sfifo72_10
 import_ip -files {../ip_catalog/afifo72_11r.xci} -name afifo72_11r
+import_ip -files {../ip_catalog/afifo72_12w.xci} -name afifo72_12w
 
 set_property USED_IN {synthesis implementation} [get_files ../synthesis/runs/top.srcs/sources_1/ip/ten_gig_eth_pcs_pma_ip/ten_gig_eth_pcs_pma_ip.xci]
 set_property USED_IN {synthesis implementation} [get_files ../synthesis/runs/top.srcs/sources_1/ip/sfifo72_10/sfifo72_10.xci]
@@ -35,7 +36,6 @@ read_verilog "../rtl/network_path/ten_gig_eth_pcs_pma_ip_GT_Common_wrapper.v"
 read_verilog "../rtl/top.v"
 read_verilog "../rtl/l2switch.v"
 read_verilog "../rtl/xgmii2fifo72.v"
-read_verilog "../rtl/xgmii2gmii.v"
 read_verilog "../rtl/fifo72toxgmii.v"
 read_verilog "../../../cores/gmii2xgmii/rtl/gmii2xgmii.v"
 read_verilog "../../../cores/xgmii2gmii/rtl/xgmii2gmii.v"

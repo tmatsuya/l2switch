@@ -56,6 +56,7 @@ module l2switch (
 );
 
 wire  [71:0] xgmii_0_rx, xgmii_1_rx, xgmii_2_rx, xgmii_2_rx, xgmii_3_rx, xgmii_4_rx, xgmii_5_rx;
+wire  [71:0] xgmii_5_tx;
 
 //-----------------------------------
 // RX0,RX1,RX2,RX3_XGMIIQ FIFO
@@ -229,6 +230,15 @@ gmii2xgmii gmii2xgmii_inst_0 (
 	.xgmii_rxc(xgmii_5_rx[71:64]),
 	.xgmii_rxd(xgmii_5_rx[63:0])
 );
+xgmii2gmii xgmii2gmii_inst_0 (
+	.xgmii_clk(sys_clk),
+	.xgmii_txc(xgmii_5_tx[71:64]),
+	.xgmii_txd(xgmii_5_tx[63:0]),
+	.sys_rst(sys_rst),
+	.gmii_clk(gmii_0_gtxclk),
+	.gmii_en(gmii_0_txen),
+	.gmii_txd(gmii_0_txd)
+);
 
 
 // XGMII control characters
@@ -272,6 +282,8 @@ assign xgmii_2_txd = xgmii_5_rx[63: 0];
 assign xgmii_3_txc = xgmii_2_rx[71:64];
 assign xgmii_3_txd = xgmii_2_rx[63: 0];
 `endif
+assign xgmii_5_tx[71:64] = xgmii_2_rx[71:64];
+assign xgmii_5_tx[63: 0] = xgmii_2_rx[63: 0];
 
 assign led[7:4] = 4'h0;
 assign led[1:0] = {xphy_1_status[0], xphy_0_status[0]};
