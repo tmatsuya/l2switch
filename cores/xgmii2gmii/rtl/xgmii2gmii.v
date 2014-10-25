@@ -16,7 +16,8 @@ module xgmii2gmii (
 wire [71:0] tx0_phyq_din, tx0_phyq_dout;
 wire tx0_phyq_full;
 reg tx0_phyq_wr_en;
-wire tx0_phyq_empty, tx0_phyq_rd_en;
+wire tx0_phyq_empty;
+reg tx0_phyq_rd_en;
 wire tx0_phyq_prog_full;
 
 afifo72_12w afifo72_12w_0 (
@@ -83,7 +84,6 @@ always @(*) begin
 	end
 end
 
-`ifdef NO
 //-----------------------------------
 // write to GMII logic
 //-----------------------------------
@@ -92,45 +92,57 @@ reg [1:0] gmii_state = 2'b0;
 parameter GMII_STATE_IDLE = 2'b00;
 parameter GMII_STATE_SEND = 2'b01;
 parameter GMII_STATE_IFG  = 2'b10;
+
+reg [2:0] tx_count = 3'd0;
+reg [63:0] tx_data = 64'h0;
+reg [7:0] tx_en = 8'h0;
+
+assign gmii_en  = tx_en[0];
+assign gmii_txd = tx_data[7:0];
+
 always @(posedge gmii_clk) begin
 	if (sys_rst) begin
 		tx0_phyq_rd_en <= 1'b0;
-		gmii_packet_count <= 8'h0;
-		gmii_rxc <= 8'hff;
-		gmii_rxd <= 64'h07_07_07_07_07_07_07_07;
-		gmii_find_data <= 1'b0;
+		tx_en <= 1'b0;
+		tx_data <= 8'h00;
+		tx_count <= 3'd0;
 		gmii_state <= GMII_STATE_IDLE;
 	end else begin
 		tx0_phyq_rd_en <= 1'b0;
-		gmii_rxc <= 8'hff;
-		gmii_rxd <= 64'h07_07_07_07_07_07_07_07;
 		case (gmii_state)
 			GMII_STATE_IDLE: begin
-				if (xgmii_packet_count != gmii_packet_count) begin
-					gmii_find_data <= 1'b0;
-					gmii_state <= GMII_STATE_SEND;
-				end
+				if (tx0_phyq_rd_en) begin
+					if (tx0_phyq_dout == 72'h01_d5_55_55_55_55_55_55_fb) begin
+						tx_en   <= 8'hff;
+						tx_data <= 64'hd5_55_55_55_55_55_55_55;
+						tx_count <= 3'd0;
+						gmii_state <= GMII_STATE_SEND;
+					end
+				end else
+					tx0_phyq_rd_en <= ~tx0_phyq_empty;
 			end
 			GMII_STATE_SEND: begin
-				tx0_phyq_rd_en <= ~tx0_phyq_empty;
+				tx_en <= {1'b0, tx_en[7:1]};
+				tx_data <= {8'h00, tx_data[63:8]};
+				tx_count <= tx_count + 3'd1;
 				if (tx0_phyq_rd_en) begin
-					gmii_rxc <= tx0_phyq_dout[71:64];
-					gmii_rxd <= tx0_phyq_dout[63: 0];
-					if (tx0_phyq_dout[71:64] == 8'hff) begin
-						if (gmii_find_data)
-							gmii_state <= GMII_STATE_IFG;
-					end else
-						gmii_find_data <= 1'b1;
-				end
+					if (tx0_phyq_dout[71:64] != 8'hff) begin
+						tx_en   <= ~tx0_phyq_dout[71:64];
+						tx_data <= tx0_phyq_dout[63:0];
+					end else begin
+						gmii_state <= GMII_STATE_IFG;
+					end
+				end else if (tx_count == 3'd7)
+					tx0_phyq_rd_en <= 1'b1;
 			end
 			GMII_STATE_IFG: begin
-				gmii_packet_count <= gmii_packet_count + 8'd1;
+				tx_en <= 1'b0;
+				tx_data <= 8'h00;
 				gmii_state <= GMII_STATE_IDLE;
 			end
 		endcase
 	end
 end
-`endif
 
 endmodule
 `default_nettype wire
