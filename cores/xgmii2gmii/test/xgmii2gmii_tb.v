@@ -11,8 +11,8 @@ end
 always #8  clk156 = ~clk156;
 always #10 clk125 = ~clk125;
 
-/* GMII test */
-reg  [8:0] xgmii_rom [0:4095];
+/* XGMII test */
+reg  [71:0] xgmii_rom [0:4095];
 reg [11:0] xgmii_counter;
 wire  [71:0] xgmii_cur;
 assign xgmii_cur = xgmii_rom[ xgmii_counter ];

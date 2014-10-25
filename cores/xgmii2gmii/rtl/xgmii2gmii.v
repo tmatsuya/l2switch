@@ -32,109 +32,61 @@ afifo72_12w afifo72_12w_0 (
 	.prog_full(tx0_phyq_prog_full)
 );
 
+
 //-----------------------------------
-// read from XGMII logic
+// write XGMII to tx_FIFO
 //-----------------------------------
-reg tx_en = 1'b0;
-reg [7:0] tx_data = 8'h00;
-reg [2:0] col = 3'd0;
+reg tx0_phyq_enough = 1'b0;
 reg [1:0] xgmii_state = 2'b00;
+reg [1:0] xgmii_next_state = 2'b00;
 
 parameter XGMII_STATE_IDLE = 2'b00;
 parameter XGMII_STATE_DV   = 2'b01;
 parameter XGMII_STATE_IFG  = 2'b10;
 
-`ifdef NO
+assign tx0_phyq_din = {xgmii_txc[7:0], xgmii_txd[63:0]};
 
 always @(posedge xgmii_clk) begin
 	if (sys_rst) begin
-		tx0_phyq_wr_en <= 1'b0;
 		xgmii_state <= XGMII_STATE_IDLE;
 	end else begin
+		xgmii_state <= xgmii_next_state;
+	end
+end
+
+always @(*) begin
+	if (sys_rst) begin
+		tx0_phyq_enough = 1'b0;
+		tx0_phyq_wr_en = 1'b0;
+		xgmii_next_state = XGMII_STATE_IDLE;
+	end else begin
+		tx0_phyq_wr_en = 1'b0;
 		case (xgmii_state)
 			XGMII_STATE_IDLE: begin
-				if (xgmii_txc == 8'h01 && xgmii_txd == 64'h07_07_07_07_07_07_07_fb) begin
-					xgmii_state <= XGMII_STATE_DV;
+				if (xgmii_txc == 8'h01 && xgmii_txd == 64'hd5_55_55_55_55_55_55_fb) begin
+					tx0_phyq_enough = ~tx0_phyq_prog_full;
+					tx0_phyq_wr_en = 1'b1;
+					xgmii_next_state = XGMII_STATE_DV;
 				end
 			end
 			XGMII_STATE_DV: begin
-				if (xgmii_dv) begin
-					rx_ctl <= 1'b0;
-					rx_data <= xgmii_rxd;
-				end else begin
-					rx_data <= 8'hfd;
-					xgmii_state <= XGMII_STATE_IFG;
+				tx0_phyq_wr_en = tx0_phyq_enough;
+				if (xgmii_txc == 8'hff) begin
+					xgmii_next_state = XGMII_STATE_IFG;
 				end
 			end
 			XGMII_STATE_IFG: begin
-				rx_data <= 8'h07;
-				if (col == 3'd7) begin
-					xgmii_state <= XGMII_STATE_IDLE;
-				end
+				tx0_phyq_wr_en = tx0_phyq_enough;
+				xgmii_next_state = XGMII_STATE_IDLE;
 			end
 		endcase
 	end
 end
 
-reg [7:0] gmii_c;
-reg [63:0] gmii_d;
-reg fifo_wr_en;
-reg [2:0] rx_count;
-reg xgmii_frame_end;
-
-always @(posedge xgmii_clk) begin
-	if (sys_rst) begin
-		rx_count <= 3'd0;
-		gmii_c <= 8'hff;
-		gmii_d <= 64'h07_07_07_07_07_07_07_07;
-		fifo_wr_en <= 1'b0;
-		xgmii_frame_end <= 1'b0;
-	end else begin
-		fifo_wr_en <= 1'b0;
-		xgmii_frame_end <= 1'b0;
-		if (rx_dv) begin
-			rx_count <= rx_count + 3'd1;
-			if (rx_count == 3'd7) begin
-				fifo_wr_en <= 1'b1;
-			end
-			gmii_c <= {rx_ctl, gmii_c[7:1]};
-			gmii_d <= {rx_data, gmii_d[63:8]};
-		end else begin
-			gmii_c <= 8'hff;
-			gmii_d <= 64'h07_07_07_07_07_07_07_07;
-			if (rx_count != 3'd0) begin
-				xgmii_frame_end <= 1'b1;
-				fifo_wr_en <= 1'b1;
-				rx_count <= rx_count + 3'd1;
-			end
-		end
-	end
-end
-
-assign tx0_phyq_wr_en = fifo_wr_en;
-assign tx0_phyq_din = {gmii_c, gmii_d};
-
+`ifdef NO
 //-----------------------------------
-// count GMII frame
+// write to GMII logic
 //-----------------------------------
-reg [7:0] xgmii_packet_count;		// receive GMII packet count
-reg [3:0] prev_xgmii_end;
-always @(posedge gmii_clk) begin
-	if (sys_rst) begin
-		xgmii_packet_count <= 8'h0;
-		prev_xgmii_end <= 4'b0000;
-	end else begin
-		prev_xgmii_end <= {xgmii_frame_end, prev_xgmii_end[3:1]};
-		if (prev_xgmii_end == 4'b0001)
-			xgmii_packet_count <= xgmii_packet_count + 8'd1;
-	end
-end
-
-//-----------------------------------
-// write to XGMII logic
-//-----------------------------------
-reg [7:0] gmii_packet_count;		// transmit XGMII packet count
-reg gmii_find_data = 1'b0;
 reg [1:0] gmii_state = 2'b0;
 
 parameter GMII_STATE_IDLE = 2'b00;
