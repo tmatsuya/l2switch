@@ -131,6 +131,7 @@ IBUF clkin1_ibufg
 BUFG clkf_buf
    (.O (clkfbout_buf_clk_wiz_0),
     .I (clkfbout_clk_wiz_0));
+`ifdef NO
 reg [11:0] count = 12'h0;
 reg txen = 1'b0;
 reg [7:0] txdata = 8'h00;
@@ -162,6 +163,9 @@ always @(posedge clk_125) begin
 	endcase
 	count <= count + 12'd1;
 end
+assign gphy0_txen = txen; //1'b0;
+assign gphy0_txd = txdata;
+`endif
 
 reg [7:0] cold_counter = 8'h0;
 reg cold_reset = 1'b0;
@@ -177,9 +181,7 @@ end
 assign gphy0_gtxclk = clk_125;
 assign gphy0_txclk = 1'b0;
 assign gphy0_reset = ~(sys_rst | cold_reset);
-assign gphy0_txen = txen; //1'b0;
 assign gphy0_txer = 1'b0;
-assign gphy0_txd = txdata;
 assign gphy0_mdc = 1'b0;
 assign gphy0_mdio = 1'b0;
 `endif
