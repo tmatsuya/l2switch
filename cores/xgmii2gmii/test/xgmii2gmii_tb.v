@@ -1,6 +1,6 @@
 `timescale 1ps / 1ps
 `define SIMULATION
-module gmii2xgmii_tb();
+module xgmii2gmii_tb();
 
 /* 125 and 156.25MHz clock */
 reg clk156, clk125;
@@ -12,28 +12,25 @@ always #8  clk156 = ~clk156;
 always #10 clk125 = ~clk125;
 
 /* GMII test */
-reg  [8:0] gmii_rom [0:4095];
-reg [11:0] gmii_counter;
-wire  [8:0] gmii_cur;
-assign gmii_cur = gmii_rom[ gmii_counter ];
+reg  [8:0] xgmii_rom [0:4095];
+reg [11:0] xgmii_counter;
+wire  [71:0] xgmii_cur;
+assign xgmii_cur = xgmii_rom[ xgmii_counter ];
 
 reg         sys_rst;
-reg         gmii_clk;
-reg         gmii_dv;
-reg  [ 7:0] gmii_rxd;
-wire        xgmii_clk;
-wire [ 7:0] xgmii_rxc;
+wire        gmii_en;
+wire [ 7:0] gmii_txd;
 
-gmii2xgmii gmii2xgmii_inst (
+xgmii2gmii xgmii2gmii_inst (
 	.sys_rst(sys_rst),
-	// GMII interface
-	.gmii_clk(clk125),
-	.gmii_dv(gmii_cur[8]),
-	.gmii_rxd(gmii_cur[7:0]),
 	// XGMII interfaces for MAC
 	.xgmii_clk(clk156),
-	.xgmii_rxc(xgmii_rxc),
-	.xgmii_rxd(xgmii_rxd)
+	.xgmii_txc(xgmii_cur[71:64]),
+	.xgmii_txd(xgmii_cur[63: 0]),
+	// GMII interface
+	.gmii_clk(clk125),
+	.gmii_en(gmii_en),
+	.gmii_txd(gmii_txd)
 );
 
 task waitclock;
@@ -44,22 +41,21 @@ end
 endtask
 
 
-always @(posedge clk125) begin
+always @(posedge clk156) begin
 	if (sys_rst) begin
-		gmii_counter <= 0;
+		xgmii_counter <= 0;
 	end else begin
-		gmii_counter <= gmii_counter + 1;
+		xgmii_counter <= xgmii_counter + 1;
 	end
 end
 
 
 initial begin
     $dumpfile("test.vcd");
-	$dumpvars(0, gmii2xgmii_tb); 
-	$readmemh("gmii_data.hex", gmii_rom);
+	$dumpvars(0, xgmii2gmii_tb); 
+	$readmemh("xgmii_data.hex", xgmii_rom);
 	/* Reset / Initialize our logic */
 	sys_rst = 1'b1;
-	gmii_counter <= 0;
 
 	waitclock;
 	waitclock;

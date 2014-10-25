@@ -2,21 +2,21 @@
 
 module xgmii2gmii (
 	input  wire        sys_rst,
-	input  wire        gmii_clk,
-	input  wire [ 7:0] gmii_txc,
-	input  wire [63:0] gmii_txd,
 	input  wire        xgmii_clk,
-	output wire        xgmii_en,
-	output wire [ 7:0] xgmii_txd
+	input  wire [ 7:0] xgmii_txc,
+	input  wire [63:0] xgmii_txd,
+	input  wire        gmii_clk,
+	output wire        gmii_en,
+	output wire [ 7:0] gmii_txd
 );
 
 //-----------------------------------
 // AFIFO
 //-----------------------------------
 wire [71:0] tx0_phyq_din, tx0_phyq_dout;
-wire tx0_phyq_full, tx0_phyq_wr_en;
-wire tx0_phyq_empty;
-reg tx0_phyq_rd_en;
+wire tx0_phyq_full;
+reg tx0_phyq_wr_en;
+wire tx0_phyq_empty, tx0_phyq_rd_en;
 
 afifo72_11r afifo72_11r_0 (
 	.rst(sys_rst),
@@ -33,36 +33,27 @@ afifo72_11r afifo72_11r_0 (
 //-----------------------------------
 // read from XGMII logic
 //-----------------------------------
-reg rx_dv;
-reg rx_ctl;
-reg [7:0] rx_data;
+reg tx_en = 1'b0;
+reg [7:0] tx_data = 8'h00;
 reg [2:0] col = 3'd0;
-reg [1:0] xgmii_state = 2'b0;
+reg [1:0] xgmii_state = 2'b00;
 
 parameter XGMII_STATE_IDLE = 2'b00;
 parameter XGMII_STATE_DV   = 2'b01;
 parameter XGMII_STATE_IFG  = 2'b10;
 
+`ifdef NO
+
 always @(posedge xgmii_clk) begin
 	if (sys_rst) begin
-		rx_dv <= 1'b0;
-		rx_ctl <= 1'b1;
-		rx_data <= 8'h07;
-		col <= 3'd0;
+		tx0_phyq_wr_en <= 1'b0;
 		xgmii_state <= XGMII_STATE_IDLE;
 	end else begin
-		rx_ctl <= 1'b1;
-		col <= col + 3'd1;
 		case (xgmii_state)
 			XGMII_STATE_IDLE: begin
-				col <= 3'd0;
-				if (xgmii_dv) begin
-					rx_dv <= 1'b1;
-					rx_data <= 8'hfb;
-					col <= 3'd0;
+				if (xgmii_txc == 8'h01 && xgmii_txd == 64'h07_07_07_07_07_07_07_fb) begin
 					xgmii_state <= XGMII_STATE_DV;
-				end else
-					rx_dv <= 1'b0;
+				end
 			end
 			XGMII_STATE_DV: begin
 				if (xgmii_dv) begin
@@ -185,6 +176,7 @@ always @(posedge gmii_clk) begin
 		endcase
 	end
 end
+`endif
 
 endmodule
 `default_nettype wire
