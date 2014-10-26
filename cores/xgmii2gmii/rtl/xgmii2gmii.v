@@ -132,7 +132,7 @@ always @(posedge gmii_clk) begin
 					end else begin
 						gmii_state <= GMII_STATE_IFG;
 					end
-				end else if (tx_count == 3'd7)
+				end else if (tx_count == 3'd6)
 					tx0_phyq_rd_en <= 1'b1;
 			end
 			GMII_STATE_IFG: begin
